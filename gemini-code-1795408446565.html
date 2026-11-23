@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nineteen Alpha — HRM & Office Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans">
+
+  <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-slate-200">
+      <div class="text-center mb-6">
+        <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider text-indigo-700 bg-indigo-100 rounded-full uppercase">Nineteen Alpha</span>
+        <h1 class="text-2xl font-bold text-slate-900 mt-2">HRM & Office Portal</h1>
+        <p class="text-sm text-slate-500 mt-1">Sign in to manage employees, attendance & documents</p>
+      </div>
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Email Address</label>
+          <input type="email" id="login-email" value="admin@nineteenalpha.com" required class="mt-1 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Password</label>
+          <input type="password" id="login-password" value="admin123" required class="mt-1 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+        </div>
+        <p id="login-error" class="text-sm text-red-600 hidden"></p>
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition">Sign In</button>
+      </form>
+      <div class="mt-5 p-3 bg-slate-50 rounded-lg text-xs text-slate-600 border">
+        <p><strong>Demo Admin:</strong> admin@nineteenalpha.com / admin123</p>
+        <p><strong>Demo Employee:</strong> masum@nineteenalpha.com / emp123</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="app-screen" class="hidden min-h-screen flex flex-col md:flex-row">
+    <aside class="w-full md:w-64 bg-slate-900 text-white flex flex-col">
+      <div class="p-5 border-b border-slate-800">
+        <h2 class="text-lg font-bold tracking-wide text-indigo-400">NINETEEN ALPHA</h2>
+        <p class="text-xs text-slate-400 mt-0.5">HRM & Office Suite</p>
+      </div>
+      <nav class="flex-1 p-4 space-y-1.5 text-sm">
+        <button onclick="switchTab('dashboard')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg bg-indigo-600 font-medium" data-tab="dashboard">Dashboard</button>
+        <button onclick="switchTab('employees')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-800" data-tab="employees">Employee Directory</button>
+        <button onclick="switchTab('attendance')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-800" data-tab="attendance">Attendance & Logs</button>
+        <button onclick="switchTab('leaves')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-800" data-tab="leaves">Leave Management</button>
+        <button onclick="switchTab('documents')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-800" data-tab="documents">Documentation Hub</button>
+        <button onclick="switchTab('tasks')" class="nav-btn w-full text-left px-4 py-2.5 rounded-lg hover:bg-slate-800" data-tab="tasks">Office Tasks & Ops</button>
+      </nav>
+      <div class="p-4 border-t border-slate-800 text-xs">
+        <p id="user-name-display" class="font-semibold text-white"></p>
+        <p id="user-role-display" class="text-slate-400 capitalize mb-3"></p>
+        <button onclick="logout()" class="w-full py-2 bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white rounded-lg transition font-medium">Logout</button>
+      </div>
+    </aside>
+
+    <main class="flex-1 p-6 overflow-y-auto">
+      <section id="tab-dashboard" class="tab-section space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900">Office Overview</h1>
+            <p id="today-date-display" class="text-sm text-slate-500"></p>
+          </div>
+          <div class="flex gap-3">
+            <button id="btn-checkin" onclick="checkIn()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow">Check In</button>
+            <button id="btn-checkout" onclick="checkOut()" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow">Check Out</button>
+          </div>
+        </div>
+
+        <div id="attendance-banner" class="p-4 bg-indigo-50 border border-indigo-200 rounded-xl text-sm text-indigo-900"></div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div class="bg-white p-5 rounded-xl shadow-sm border">
+            <p class="text-xs text-slate-500 uppercase font-semibold">Active Staff</p>
+            <p id="stat-employees" class="text-2xl font-bold mt-1">0</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl shadow-sm border">
+            <p class="text-xs text-slate-500 uppercase font-semibold">Present Today</p>
+            <p id="stat-present" class="text-2xl font-bold text-emerald-600 mt-1">0</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl shadow-sm border">
+            <p class="text-xs text-slate-500 uppercase font-semibold">Pending Leaves</p>
+            <p id="stat-leaves" class="text-2xl font-bold text-amber-600 mt-1">0</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl shadow-sm border">
+            <p class="text-xs text-slate-500 uppercase font-semibold">Open Office Tasks</p>
+            <p id="stat-tasks" class="text-2xl font-bold text-indigo-600 mt-1">0</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl shadow-sm border">
+            <p class="text-xs text-slate-500 uppercase font-semibold">Stored Documents</p>
+            <p id="stat-docs" class="text-2xl font-bold text-slate-700 mt-1">0</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-employees" class="tab-section hidden space-y-6">
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-bold">Employee Management</h1>
+        </div>
+        <div id="admin-add-emp-box" class="bg-white p-5 rounded-xl shadow-sm border hidden">
+          <h2 class="font-semibold mb-3 text-slate-800">Add New Employee</h2>
+          <form id="add-emp-form" class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
+            <input type="text" name="emp_code" placeholder="ID (e.g. NA-003)" required class="border p-2 rounded-lg" />
+            <input type="text" name="name" placeholder="Full Name" required class="border p-2 rounded-lg" />
+            <input type="email" name="email" placeholder="Official Email" required class="border p-2 rounded-lg" />
+            <input type="password" name="password" placeholder="Default Password" required class="border p-2 rounded-lg" />
+            <input type="text" name="department" placeholder="Department" required class="border p-2 rounded-lg" />
+            <input type="text" name="designation" placeholder="Designation" required class="border p-2 rounded-lg" />
+            <input type="text" name="phone" placeholder="Phone Number" class="border p-2 rounded-lg" />
+            <input type="date" name="join_date" required class="border p-2 rounded-lg" />
+            <select name="role" class="border p-2 rounded-lg">
+              <option value="employee">Role: Employee</option>
+              <option value="admin">Role: Admin</option>
+            </select>
+            <button type="submit" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 md:col-span-3">Save Employee</button>
+          </form>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-slate-50 border-b text-slate-600">
+              <tr>
+                <th class="p-3">ID</th>
+                <th class="p-3">Name</th>
+                <th class="p-3">Department & Role</th>
+                <th class="p-3">Contact</th>
+                <th class="p-3">Join Date</th>
+                <th class="p-3">Action</th>
+              </tr>
+            </thead>
+            <tbody id="employees-table-body" class="divide-y"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-attendance" class="tab-section hidden space-y-6">
+        <h1 class="text-2xl font-bold">Attendance Logs</h1>
+        <div class="bg-white rounded-xl shadow-sm border overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-slate-50 border-b text-slate-600">
+              <tr>
+                <th class="p-3">Date</th>
+                <th class="p-3">Employee</th>
+                <th class="p-3">Department</th>
+                <th class="p-3">Check In</th>
+                <th class="p-3">Check Out</th>
+                <th class="p-3">Status</th>
+              </tr>
+            </thead>
+            <tbody id="attendance-table-body" class="divide-y"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-leaves" class="tab-section hidden space-y-6">
+        <h1 class="text-2xl font-bold">Leave Management</h1>
+        <div class="bg-white p-5 rounded-xl shadow-sm border">
+          <h2 class="font-semibold mb-3">Apply for Leave</h2>
+          <form id="leave-form" class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
+            <select name="leave_type" class="border p-2 rounded-lg">
+              <option value="Casual Leave">Casual Leave</option>
+              <option value="Sick Leave">Sick Leave</option>
+              <option value="Earned Leave">Earned Leave</option>
+            </select>
+            <input type="date" name="start_date" required class="border p-2 rounded-lg" />
+            <input type="date" name="end_date" required class="border p-2 rounded-lg" />
+            <input type="text" name="reason" placeholder="Reason for leave" required class="border p-2 rounded-lg" />
+            <button type="submit" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg md:col-span-4">Submit Leave Request</button>
+          </form>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-slate-50 border-b text-slate-600">
+              <tr>
+                <th class="p-3">Employee</th>
+                <th class="p-3">Type</th>
+                <th class="p-3">Duration</th>
+                <th class="p-3">Reason</th>
+                <th class="p-3">Status</th>
+                <th class="p-3">Approval</th>
+              </tr>
+            </thead>
+            <tbody id="leaves-table-body" class="divide-y"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-documents" class="tab-section hidden space-y-6">
+        <h1 class="text-2xl font-bold">Documentation & Circular Hub</h1>
+        <div class="bg-white p-5 rounded-xl shadow-sm border">
+          <h2 class="font-semibold mb-3">Upload Official Document / Policy / Employee Record</h2>
+          <form id="doc-form" class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
+            <input type="text" name="title" placeholder="Document Title (e.g. Offer Letter / HR Policy)" required class="border p-2 rounded-lg" />
+            <select name="category" class="border p-2 rounded-lg">
+              <option value="Company Policy">Company Policy / Circular</option>
+              <option value="Employee Record">Employee NID / CV / Contract</option>
+              <option value="Official Letter">Official Letter / NOC</option>
+            </select>
+            <input type="file" name="file" required class="border p-1.5 rounded-lg bg-slate-50" />
+            <button type="submit" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg">Upload Document</button>
+          </form>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-slate-50 border-b text-slate-600">
+              <tr>
+                <th class="p-3">Title</th>
+                <th class="p-3">Category</th>
+                <th class="p-3">Uploaded By</th>
+                <th class="p-3">Date</th>
+                <th class="p-3">File</th>
+              </tr>
+            </thead>
+            <tbody id="docs-table-body" class="divide-y"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-tasks" class="tab-section hidden space-y-6">
+        <h1 class="text-2xl font-bold">Office Tasks & Operations</h1>
+        <div class="bg-white p-5 rounded-xl shadow-sm border">
+          <h2 class="font-semibold mb-3">Assign Office Task</h2>
+          <form id="task-form" class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
+            <input type="text" name="title" placeholder="Task Title" required class="border p-2 rounded-lg" />
+            <input type="text" name="description" placeholder="Details / Deliverables" class="border p-2 rounded-lg" />
+            <select name="priority" class="border p-2 rounded-lg">
+              <option value="Medium">Priority: Medium</option>
+              <option value="High">Priority: High</option>
+              <option value="Low">Priority: Low</option>
+            </select>
+            <input type="date" name="due_date" required class="border p-2 rounded-lg" />
+            <button type="submit" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg md:col-span-4">Create Task</button>
+          </form>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-slate-50 border-b text-slate-600">
+              <tr>
+                <th class="p-3">Task</th>
+                <th class="p-3">Assignee</th>
+                <th class="p-3">Priority</th>
+                <th class="p-3">Due Date</th>
+                <th class="p-3">Status</th>
+              </tr>
+            </thead>
+            <tbody id="tasks-table-body" class="divide-y"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    let token = localStorage.getItem('hrm_token');
+    let currentUser = JSON.parse(localStorage.getItem('hrm_user') || 'null');
+
+    async function api(url, options = {}) {
+      options.headers = { ...(options.headers || {}), Authorization: `Bearer ${token}` };
+      if (!(options.body instanceof FormData)) {
+        options.headers['Content-Type'] = 'application/json';
+      }
+      const res = await fetch(url, options);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Request failed');
+      return data;
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        token = data.token;
+        currentUser = data.user;
+        localStorage.setItem('hrm_token', token);
+        localStorage.setItem('hrm_user', JSON.stringify(currentUser));
+        initApp();
+      } catch (err) {
+        const errEl = document.getElementById('login-error');
+        errEl.textContent = err.message;
+        errEl.classList.remove('hidden');
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem('hrm_token');
+      localStorage.removeItem('hrm_user');
+      location.reload();
+    }
+
+    function initApp() {
+      if (!token || !currentUser) return;
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('app-screen').classList.remove('hidden');
+      document.getElementById('user-name-display').textContent = `${currentUser.name} (${currentUser.emp_code})`;
+      document.getElementById('user-role-display').textContent = `${currentUser.role} • ${currentUser.department}`;
+      if (currentUser.role === 'admin') {
+        document.getElementById('admin-add-emp-box').classList.remove('hidden');
+      }
+      loadDashboard();
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-section').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tab}`).classList.remove('hidden');
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'font-medium');
+        if (btn.dataset.tab === tab) btn.classList.add('bg-indigo-600', 'font-medium');
+      });
+
+      if (tab === 'dashboard') loadDashboard();
+      if (tab === 'employees') loadEmployees();
+      if (tab === 'attendance') loadAttendance();
+      if (tab === 'leaves') loadLeaves();
+      if (tab === 'documents') loadDocuments();
+      if (tab === 'tasks') loadTasks();
+    }
+
+    async function loadDashboard() {
+      const data = await api('/api/dashboard');
+      document.getElementById('today-date-display').textContent = `Date (Asia/Dhaka): ${data.date}`;
+      document.getElementById('stat-employees').textContent = data.stats.totalEmployees;
+      document.getElementById('stat-present').textContent = data.stats.presentToday;
+      document.getElementById('stat-leaves').textContent = data.stats.pendingLeaves;
+      document.getElementById('stat-tasks').textContent = data.stats.openTasks;
+      document.getElementById('stat-docs').textContent = data.stats.totalDocs;
+
+      const banner = document.getElementById('attendance-banner');
+      if (!data.myAttendanceToday) {
+        banner.textContent = 'You have not checked in today. Click "Check In" to log your attendance.';
+      } else {
+        banner.textContent = `Today's Status: ${data.myAttendanceToday.status} | Check-In: ${data.myAttendanceToday.check_in} | Check-Out: ${data.myAttendanceToday.check_out || 'Active Session'}`;
+      }
+    }
+
+    async function checkIn() {
+      try {
+        const res = await api('/api/attendance/check-in', { method: 'POST', body: JSON.stringify({}) });
+        alert(res.message);
+        loadDashboard();
+      } catch (e) { alert(e.message); }
+    }
+
+    async function checkOut() {
+      try {
+        const res = await api('/api/attendance/check-out', { method: 'POST', body: JSON.stringify({}) });
+        alert(res.message);
+        loadDashboard();
+      } catch (e) { alert(e.message); }
+    }
+
+    async function loadEmployees() {
+      const list = await api('/api/employees');
+      const tbody = document.getElementById('employees-table-body');
+      tbody.innerHTML = list.map(e => `
+        <tr>
+          <td class="p-3 font-medium">${e.emp_code}</td>
+          <td class="p-3">${e.name}<div class="text-xs text-slate-400">${e.email}</div></td>
+          <td class="p-3">${e.department}<div class="text-xs text-slate-500">${e.designation}</div></td>
+          <td class="p-3">${e.phone || '-'}</td>
+          <td class="p-3">${e.join_date}</td>
+          <td class="p-3">${currentUser.role === 'admin' && e.id !== currentUser.id ? `<button onclick="deleteEmployee(${e.id})" class="text-red-600 hover:underline text-xs">Remove</button>` : '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    document.getElementById('add-emp-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = Object.fromEntries(new FormData(e.target).entries());
+      try {
+        await api('/api/employees', { method: 'POST', body: JSON.stringify(payload) });
+        e.target.reset();
+        loadEmployees();
+      } catch (err) { alert(err.message); }
+    });
+
+    async function deleteEmployee(id) {
+      if (!confirm('Remove this employee?')) return;
+      await api(`/api/employees/${id}`, { method: 'DELETE' });
+      loadEmployees();
+    }
+
+    async function loadAttendance() {
+      const logs = await api('/api/attendance');
+      document.getElementById('attendance-table-body').innerHTML = logs.map(l => `
+        <tr>
+          <td class="p-3 font-medium">${l.date}</td>
+          <td class="p-3">${l.name} (${l.emp_code})</td>
+          <td class="p-3">${l.department}</td>
+          <td class="p-3 text-emerald-700 font-medium">${l.check_in || '-'}</td>
+          <td class="p-3 text-amber-700 font-medium">${l.check_out || '-'}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs ${l.status === 'Late' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${l.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadLeaves() {
+      const leaves = await api('/api/leaves');
+      document.getElementById('leaves-table-body').innerHTML = leaves.map(l => `
+        <tr>
+          <td class="p-3 font-medium">${l.name} (${l.emp_code})</td>
+          <td class="p-3">${l.leave_type}</td>
+          <td class="p-3">${l.start_date} to ${l.end_date}</td>
+          <td class="p-3">${l.reason}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs font-medium ${l.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : l.status === 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'}">${l.status}</span></td>
+          <td class="p-3 space-x-2">
+            ${currentUser.role === 'admin' && l.status === 'Pending' ? `
+              <button onclick="updateLeave(${l.id}, 'Approved')" class="text-emerald-600 font-semibold text-xs hover:underline">Approve</button>
+              <button onclick="updateLeave(${l.id}, 'Rejected')" class="text-red-600 font-semibold text-xs hover:underline">Reject</button>
+            ` : '-'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    document.getElementById('leave-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = Object.fromEntries(new FormData(e.target).entries());
+      await api('/api/leaves', { method: 'POST', body: JSON.stringify(payload) });
+      e.target.reset();
+      loadLeaves();
+    });
+
+    async function updateLeave(id, status) {
+      await api(`/api/leaves/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) });
+      loadLeaves();
+    }
+
+    async function loadDocuments() {
+      const docs = await api('/api/documents');
+      document.getElementById('docs-table-body').innerHTML = docs.map(d => `
+        <tr>
+          <td class="p-3 font-medium">${d.title}</td>
+          <td class="p-3">${d.category}</td>
+          <td class="p-3">${d.uploaded_by}</td>
+          <td class="p-3">${d.created_at.split(' ')[0]}</td>
+          <td class="p-3"><a href="${d.file_path}" target="_blank" class="text-indigo-600 font-semibold hover:underline">View / Download</a></td>
+        </tr>
+      `).join('');
+    }
+
+    document.getElementById('doc-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      await api('/api/documents', { method: 'POST', body: formData });
+      e.target.reset();
+      loadDocuments();
+    });
+
+    async function loadTasks() {
+      const tasks = await api('/api/tasks');
+      document.getElementById('tasks-table-body').innerHTML = tasks.map(t => `
+        <tr>
+          <td class="p-3 font-medium">${t.title}<div class="text-xs text-slate-400">${t.description || ''}</div></td>
+          <td class="p-3">${t.assignee_name || 'All'}</td>
+          <td class="p-3">${t.priority}</td>
+          <td class="p-3">${t.due_date || '-'}</td>
+          <td class="p-3">
+            <select onchange="updateTask(${t.id}, this.value)" class="border rounded px-2 py-1 text-xs">
+              <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
+              <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+              <option value="Completed" ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
+            </select>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    document.getElementById('task-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = Object.fromEntries(new FormData(e.target).entries());
+      await api('/api/tasks', { method: 'POST', body: JSON.stringify(payload) });
+      e.target.reset();
+      loadTasks();
+    });
+
+    async function updateTask(id, status) {
+      await api(`/api/tasks/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) });
+    }
+
+    if (token && currentUser) initApp();
+  </script>
+</body>
+</html>
