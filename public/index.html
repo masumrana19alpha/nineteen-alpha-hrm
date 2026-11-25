@@ -3,901 +3,346 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nineteen Alpha — Business Management System (BMS)</title>
-  <style>
-    :root {
-      --bg: #f4f6f9;
-      --surface: #ffffff;
-      --ink: #0f172a;
-      --muted: #64748b;
-      --primary: #0f2942;
-      --accent: #0e7490;
-      --border: #e2e8f0;
-      --danger: #b91c1c;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-      line-height: 1.5;
-    }
-
-    .app {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      background: var(--primary);
-      color: #f8fafc;
-      padding: 20px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .brand {
-      padding: 8px 10px 18px;
-      border-bottom: 1px solid rgba(255,255,255,0.14);
-      margin-bottom: 8px;
-    }
-
-    .brand h1 { font-size: 1.05rem; letter-spacing: 0.4px; }
-    .brand p { font-size: 0.78rem; color: #cbd5e1; margin-top: 2px; }
-
-    .nav-btn {
-      width: 100%;
-      text-align: left;
-      background: transparent;
-      color: #e2e8f0;
-      border: none;
-      padding: 10px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: background 0.15s;
-    }
-
-    .nav-btn:hover { background: rgba(255,255,255,0.1); }
-    .nav-btn.active { background: var(--accent); color: #fff; font-weight: 600; }
-
-    .main {
-      padding: 24px;
-      max-width: 1280px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .topbar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      background: var(--surface);
-      padding: 16px 20px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-    }
-
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-      margin-bottom: 20px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
-      margin-bottom: 16px;
-    }
-
-    .card h2 { font-size: 1rem; margin-bottom: 12px; color: var(--primary); }
-    .kpi { font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-top: 4px; }
-    .muted { color: var(--muted); font-size: 0.85rem; }
-
-    .btn {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 9px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.88rem;
-      font-weight: 500;
-    }
-
-    .btn:hover { opacity: 0.92; }
-    .btn.secondary { background: var(--accent); }
-    .btn.outline { background: transparent; color: var(--ink); border: 1px solid var(--border); }
-    .btn.danger { background: var(--danger); padding: 5px 10px; font-size: 0.78rem; }
-
-    .row-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-
-    input, select {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.88rem;
-      background: #fff;
-      color: var(--ink);
-    }
-
-    table select { width: auto; padding: 5px 8px; font-size: 0.8rem; }
-
-    label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; margin-top: 10px; }
-
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.86rem; }
-    th, td { border-bottom: 1px solid var(--border); padding: 9px 8px; text-align: left; }
-    th { background: #f8fafc; color: var(--primary); font-weight: 600; }
-
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      background: #e0f2fe;
-      color: #0369a1;
-      font-weight: 600;
-    }
-
-    .panel { display: none; }
-    .panel.active { display: block; }
-
-    @media (max-width: 860px) {
-      .app { grid-template-columns: 1fr; }
-      .sidebar { flex-direction: row; overflow-x: auto; padding: 10px; }
-      .brand { display: none; }
-      .nav-btn { white-space: nowrap; width: auto; }
-    }
-
-    @media print {
-      .sidebar, .topbar .row-actions, .no-print { display: none !important; }
-      .app { display: block; }
-      .main { padding: 0; max-width: 100%; }
-      .panel { display: block !important; }
-      .card { box-shadow: none; border: 1px solid #cbd5e1; break-inside: avoid; }
-    }
-  </style>
+  <title>19 Alpha BMS — Business Management System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <h1>NINETEEN ALPHA</h1>
-        <p>Business Management System (BMS)</p>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+  <!-- Login View -->
+  <div id="login-view" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-md border border-slate-200 p-6">
+      <div class="mb-6">
+        <span class="text-xs font-semibold uppercase tracking-wider text-indigo-600">Nineteen Alpha</span>
+        <h1 class="text-2xl font-bold text-slate-900 mt-1">19 Alpha BMS</h1>
+        <p class="text-sm text-slate-500 mt-1">Sign in to access operations, projects, finance &amp; ERP modules.</p>
       </div>
-      <button class="nav-btn active" data-tab="dashboard">Overview Dashboard</button>
-      <button class="nav-btn" data-tab="hr">1. HR & Payroll</button>
-      <button class="nav-btn" data-tab="projects">2. Project Management</button>
-      <button class="nav-btn" data-tab="tasks">3. Task Management</button>
-      <button class="nav-btn" data-tab="crm">4. BD / CRM</button>
-      <button class="nav-btn" data-tab="inventory">5. Inventory & Asset</button>
-      <button class="nav-btn" data-tab="finance">6. Account & Finance</button>
-      <button class="nav-btn" data-tab="rnd">7. R & D</button>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Username</label>
+          <input
+            id="username"
+            type="text"
+            required
+            placeholder="admin"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+          <input
+            id="password"
+            type="password"
+            required
+            placeholder="••••••••"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+        <p id="login-error" class="text-sm text-red-600 hidden"></p>
+        <button
+          type="submit"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg text-sm transition"
+        >
+          Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- App Shell -->
+  <div id="app-view" class="hidden min-h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-slate-200 flex flex-col justify-between shrink-0">
+      <div>
+        <div class="px-5 py-4 border-b border-slate-800">
+          <div class="text-xs uppercase tracking-wider text-indigo-400 font-semibold">Nineteen Alpha</div>
+          <div class="text-lg font-bold text-white">19 Alpha BMS</div>
+        </div>
+        <nav id="nav-menu" class="p-3 space-y-1 text-sm">
+          <button data-tab="dashboard" class="nav-btn w-full text-left px-3 py-2 rounded-lg bg-indigo-600 text-white font-medium">
+            Executive Dashboard
+          </button>
+          <button data-tab="hr" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800">
+            HR &amp; Payroll
+          </button>
+          <button data-tab="projects" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800">
+            Projects (incl. Defence)
+          </button>
+          <button data-tab="tasks" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800">
+            Task Management
+          </button>
+          <button data-tab="crm" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800">
+            CRM &amp; Leads
+          </button>
+          <button data-tab="inventory" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800">
+            Inventory &amp; Assets
+          </button>
+          <button data-tab="finance" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800">
+            Accounts &amp; Finance
+          </button>
+          <button data-tab="rnd" class="nav-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800">
+            R&amp;D Initiatives
+          </button>
+        </nav>
+      </div>
+
+      <div class="p-4 border-t border-slate-800 text-xs">
+        <div id="current-user" class="text-slate-300 font-medium truncate mb-2"></div>
+        <button
+          id="logout-btn"
+          class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 py-1.5 rounded-md transition"
+        >
+          Logout
+        </button>
+      </div>
     </aside>
 
-    <main class="main">
-      <div class="topbar">
+    <!-- Main Content -->
+    <main class="flex-1 p-6 overflow-y-auto">
+      <header class="flex items-center justify-between mb-6">
         <div>
-          <h2 id="pageTitle">Overview Dashboard</h2>
-          <p class="muted" id="apiStatus">Checking live BMS service status...</p>
+          <h2 id="page-title" class="text-2xl font-bold text-slate-900">Executive Dashboard</h2>
+          <p id="page-subtitle" class="text-sm text-slate-500">Real-time overview across all business modules</p>
         </div>
-        <div class="row-actions">
-          <button class="btn outline" onclick="window.print()">Print / Save PDF</button>
-          <button class="btn outline" onclick="resetTestDrive()">Reset Test Drive</button>
-          <button class="btn secondary" onclick="refreshState()">Sync Data</button>
-        </div>
-      </div>
+        <button
+          id="refresh-btn"
+          class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm px-3.5 py-2 rounded-lg shadow-xs"
+        >
+          Refresh Data
+        </button>
+      </header>
 
-      <!-- OVERVIEW -->
-      <section id="dashboard" class="panel active">
-        <div class="grid-4">
-          <div class="card"><span class="muted">Active Projects</span><div class="kpi" id="kpiProjects">0</div></div>
-          <div class="card"><span class="muted">Open Tasks</span><div class="kpi" id="kpiTasks">0</div></div>
-          <div class="card"><span class="muted">CRM Opportunities</span><div class="kpi" id="kpiCrm">0</div></div>
-          <div class="card"><span class="muted">Attendance Logs</span><div class="kpi" id="kpiAtt">0</div></div>
-        </div>
-        <div class="card">
-          <h2>Integrated BMS Modules (Test Drive)</h2>
-          <p class="muted">Unified web platform covering HR & Payroll, Defence & General Projects, Task Tracking, BD/CRM, Inventory & Fixed Assets, Chart of Accounts & Financial Statements, and R&D.</p>
-        </div>
-      </section>
-
-      <!-- 1. HR & PAYROLL -->
-      <section id="hr" class="panel">
-        <div class="grid-2">
-          <div class="card">
-            <h2>Daily Attendance (Check-In / Check-Out)</h2>
-            <label>Employee</label>
-            <select id="attEmployee"></select>
-            <div class="row-actions" style="margin-top: 14px;">
-              <button class="btn" onclick="recordAttendance('CHECK_IN')">Check-In Now</button>
-              <button class="btn secondary" onclick="recordAttendance('CHECK_OUT')">Check-Out Now</button>
-            </div>
-            <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border);">
-              <label>Future Biometric / Attendance Device Integration</label>
-              <div class="row-actions" style="margin-top: 6px;">
-                <button class="btn outline" id="bioToggleBtn" onclick="toggleBiometric()">Status: OFF</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <h2>Monthly Salary Receipt Calculator</h2>
-            <label>Employee</label>
-            <select id="payEmployee" onchange="renderPayslip()"></select>
-            <label>Mobile Allowance (BDT)</label>
-            <input type="number" id="payMobile" value="1000" oninput="renderPayslip()" />
-            <label>Conveyance Allowance (BDT)</label>
-            <input type="number" id="payConveyance" value="2500" oninput="renderPayslip()" />
-            <div id="payslipBox" style="margin-top: 14px; background: #f8fafc; padding: 12px; border-radius: 8px;"></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Add Employee Profile</h2>
-          <div class="grid-2">
-            <div>
-              <label>Full Name</label>
-              <input id="empName" placeholder="Employee Name" />
-              <label>Designation</label>
-              <input id="empDesig" placeholder="Software / Supply / Admin" />
-              <label>Department</label>
-              <input id="empDept" placeholder="Operations" />
-            </div>
-            <div>
-              <label>NID</label>
-              <input id="empNid" placeholder="NID Number" />
-              <label>Bank Account</label>
-              <input id="empBank" placeholder="Account Number" />
-              <label>Basic Salary (BDT)</label>
-              <input type="number" id="empBasic" value="20000" />
-            </div>
-          </div>
-          <div style="margin-top: 14px;"><button class="btn" onclick="addEmployee()">Add Employee</button></div>
-        </div>
-
-        <div class="card">
-          <h2>Attendance History & Filter</h2>
-          <div class="grid-2" style="margin-bottom: 8px;">
-            <div>
-              <label>Filter by Employee</label>
-              <select id="filterEmp" onchange="renderAttendanceTable()"><option value="ALL">All Employees</option></select>
-            </div>
-            <div>
-              <label>Filter by Date</label>
-              <input type="date" id="filterDate" onchange="renderAttendanceTable()" />
-            </div>
-          </div>
-          <table>
-            <thead>
-              <tr><th>ID</th><th>Employee</th><th>Action</th><th>Date</th><th>Time</th></tr>
-            </thead>
-            <tbody id="attTableBody"></tbody>
-          </table>
-        </div>
-
-        <div class="card">
-          <h2>Employee Profile & Document Vault</h2>
-          <table>
-            <thead>
-              <tr><th>ID</th><th>Name</th><th>Designation</th><th>Dept</th><th>NID</th><th>Bank A/C</th></tr>
-            </thead>
-            <tbody id="empTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 2. PROJECT MANAGEMENT -->
-      <section id="projects" class="panel">
-        <div class="card">
-          <h2>Create Project (General & Defence Vertical)</h2>
-          <div class="grid-2">
-            <div>
-              <label>Project Code</label>
-              <input id="prjCode" placeholder="PRJ-DEF-002" />
-              <label>Project Name</label>
-              <input id="prjName" placeholder="Drone Jammer & Signal Integration" />
-              <label>Vertical</label>
-              <select id="prjVertical">
-                <option>Civil Construction</option>
-                <option>Software Development & Implementation</option>
-                <option>Defence Supply & Embedded</option>
-                <option>Private Sector Supply</option>
-                <option>Consultancy</option>
-              </select>
-              <label>Budget (BDT)</label>
-              <input type="number" id="prjBudget" placeholder="1500000" />
-            </div>
-            <div>
-              <label><input type="checkbox" id="prjIsDefence" style="width:auto; margin-right:6px;" checked /> Dedicated Defence Project Metadata</label>
-              <label>Defence Directorate / Unit</label>
-              <input id="defDir" placeholder="Signals / Ordnance Directorate" />
-              <label>Tender / Indent / LOA Reference</label>
-              <input id="defRef" placeholder="LOA-19A-2026-02" />
-              <label>Security Clearance & BG/PG Status</label>
-              <input id="defSec" placeholder="Clearance Verified | BG Active" />
-            </div>
-          </div>
-          <div style="margin-top: 14px;">
-            <button class="btn" onclick="addProject()">Add Project</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Projects Directory</h2>
-          <table>
-            <thead>
-              <tr><th>Code</th><th>Name</th><th>Vertical</th><th>Budget</th><th>Defence / Compliance Ref</th><th class="no-print">Action</th></tr>
-            </thead>
-            <tbody id="prjTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 3. TASK MANAGEMENT -->
-      <section id="tasks" class="panel">
-        <div class="card">
-          <h2>Assign Task</h2>
-          <div class="grid-2">
-            <div>
-              <label>Task Title</label>
-              <input id="tskTitle" placeholder="Prepare Defence tender compliance checklist" />
-              <label>Linked Module</label>
-              <input id="tskModule" value="Project Management" />
-            </div>
-            <div>
-              <label>Priority</label>
-              <select id="tskPriority"><option>High</option><option>Medium</option><option>Low</option></select>
-              <label>Deadline</label>
-              <input type="date" id="tskDeadline" />
-            </div>
-          </div>
-          <div style="margin-top: 14px;"><button class="btn" onclick="addTask()">Create Task</button></div>
-        </div>
-        <div class="card">
-          <h2>Tasks List</h2>
-          <table>
-            <thead><tr><th>ID</th><th>Title</th><th>Module</th><th>Priority</th><th>Deadline</th><th>Status</th><th class="no-print">Action</th></tr></thead>
-            <tbody id="tskTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 4. BD / CRM -->
-      <section id="crm" class="panel">
-        <div class="card">
-          <h2>Add Client / Tender / RFQ Opportunity</h2>
-          <div class="grid-2">
-            <div>
-              <label>Client / Organization Name</label>
-              <input id="crmClient" placeholder="Defence or Private Client" />
-              <label>Sector</label>
-              <select id="crmSector">
-                <option>Defence Sector</option>
-                <option>Private Sector</option>
-                <option>Consultancy / Software</option>
-              </select>
-            </div>
-            <div>
-              <label>Tender / RFQ Reference</label>
-              <input id="crmRef" placeholder="RFQ-2026-10" />
-              <label>Estimated Value (BDT)</label>
-              <input type="number" id="crmValue" value="500000" />
-            </div>
-          </div>
-          <div style="margin-top: 14px;"><button class="btn" onclick="addCrm()">Save Opportunity</button></div>
-        </div>
-        <div class="card">
-          <h2>BD / CRM — Clients, Tenders & Quotations</h2>
-          <table>
-            <thead><tr><th>ID</th><th>Client</th><th>Sector</th><th>Tender / RFQ</th><th>Est. Value</th><th>Stage</th><th class="no-print">Action</th></tr></thead>
-            <tbody id="crmTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 5. INVENTORY & ASSET -->
-      <section id="inventory" class="panel">
-        <div class="grid-2">
-          <div class="card">
-            <h2>Add Inventory Stock Item</h2>
-            <label>Item SKU</label>
-            <input id="invSku" placeholder="INV-302" />
-            <label>Item Name</label>
-            <input id="invName" placeholder="Signal Cable / Sensor Module" />
-            <label>Category</label>
-            <input id="invCat" value="Defence / Hardware Supply" />
-            <label>Stock Qty</label>
-            <input type="number" id="invQty" value="10" />
-            <div style="margin-top: 14px;"><button class="btn" onclick="addInventory()">Add Stock Item</button></div>
-          </div>
-
-          <div class="card">
-            <h2>Add Fixed Asset</h2>
-            <label>Asset ID</label>
-            <input id="astId" placeholder="AST-402" />
-            <label>Asset Name</label>
-            <input id="astName" placeholder="Lab Oscilloscope / Laptop" />
-            <label>Serial No.</label>
-            <input id="astSerial" placeholder="SN-19A-402" />
-            <label>Assigned To</label>
-            <input id="astAssign" value="Masum Rana" />
-            <div style="margin-top: 14px;"><button class="btn secondary" onclick="addAsset()">Register Asset</button></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Inventory Stock</h2>
-          <table>
-            <thead><tr><th>SKU</th><th>Item Name</th><th>Category</th><th>Location</th><th>Stock Qty</th><th class="no-print">Action</th></tr></thead>
-            <tbody id="invTableBody"></tbody>
-          </table>
-        </div>
-        <div class="card">
-          <h2>Fixed Asset Register</h2>
-          <table>
-            <thead><tr><th>Asset ID</th><th>Asset Name</th><th>Serial No.</th><th>Assigned To</th><th>Condition</th><th class="no-print">Action</th></tr></thead>
-            <tbody id="astTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 6. ACCOUNT & FINANCE -->
-      <section id="finance" class="panel">
-        <div class="grid-4">
-          <div class="card"><span class="muted">Total Debit (BDT)</span><div class="kpi" id="finDebit">0</div></div>
-          <div class="card"><span class="muted">Total Credit (BDT)</span><div class="kpi" id="finCredit">0</div></div>
-          <div class="card"><span class="muted">Net Balance (BDT)</span><div class="kpi" id="finNet">0</div></div>
-          <div class="card"><span class="muted">CoA Heads</span><div class="kpi" id="finCoaCount">0</div></div>
-        </div>
-
-        <div class="card">
-          <h2>Record Voucher (Debit / Credit)</h2>
-          <div class="grid-2">
-            <div>
-              <label>Voucher Type</label>
-              <select id="vchType"><option>Debit Voucher</option><option>Credit Voucher</option></select>
-              <label>Account Head (Chart of Accounts)</label>
-              <select id="vchHead"></select>
-            </div>
-            <div>
-              <label>Amount (BDT)</label>
-              <input type="number" id="vchAmount" value="5000" />
-              <label>Remarks / Narration</label>
-              <input id="vchNote" placeholder="Voucher description" />
-            </div>
-          </div>
-          <div style="margin-top: 14px;"><button class="btn" onclick="addVoucher()">Save Voucher</button></div>
-        </div>
-
-        <div class="card">
-          <h2>Vouchers & General Ledger Entries</h2>
-          <table>
-            <thead><tr><th>ID</th><th>Type</th><th>Account Head</th><th>Date</th><th>Amount (BDT)</th><th>Note</th><th class="no-print">Action</th></tr></thead>
-            <tbody id="vchTableBody"></tbody>
-          </table>
-        </div>
-
-        <div class="card">
-          <h2>Trial Balance & Chart of Accounts Summary</h2>
-          <table>
-            <thead><tr><th>Account Head</th><th>Debit (BDT)</th><th>Credit (BDT)</th><th>Net (BDT)</th></tr></thead>
-            <tbody id="tbTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 7. R & D -->
-      <section id="rnd" class="panel">
-        <div class="card">
-          <h2>Add R&D Initiative / Prototype</h2>
-          <div class="grid-2">
-            <div>
-              <label>Topic / Prototype</label>
-              <input id="rndTopic" placeholder="Drone Jammer RF Module / AI Medical Triage" />
-              <label>Vertical</label>
-              <input id="rndVertical" value="Defence Tech / AI Healthcare" />
-            </div>
-            <div>
-              <label>Estimated Expense (BDT)</label>
-              <input type="number" id="rndExpense" value="25000" />
-              <label>Status</label>
-              <select id="rndStatus"><option>In Research</option><option>Prototype Testing</option><option>Validated</option></select>
-            </div>
-          </div>
-          <div style="margin-top: 14px;"><button class="btn" onclick="addRnd()">Add R&D Item</button></div>
-        </div>
-
-        <div class="card">
-          <h2>Research & Development (R&D) Tracker</h2>
-          <table>
-            <thead><tr><th>ID</th><th>Topic / Prototype</th><th>Vertical</th><th>Expense (BDT)</th><th>Status</th><th class="no-print">Action</th></tr></thead>
-            <tbody id="rndTableBody"></tbody>
-          </table>
-        </div>
-      </section>
+      <div id="content-area" class="space-y-6"></div>
     </main>
   </div>
 
   <script>
-    let state = null;
+    const API_BASE = '/api';
+    let token = localStorage.getItem('bms_token') || '';
+    let activeTab = 'dashboard';
 
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab).classList.add('active');
-        document.getElementById('pageTitle').textContent = btn.textContent;
-      });
-    });
+    const loginView = document.getElementById('login-view');
+    const appView = document.getElementById('app-view');
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
+    const contentArea = document.getElementById('content-area');
+    const pageTitle = document.getElementById('page-title');
+    const pageSubtitle = document.getElementById('page-subtitle');
+    const currentUserEl = document.getElementById('current-user');
 
-    async function refreshState() {
-      try {
-        const [healthRes, stateRes] = await Promise.all([
-          fetch('/api/health'),
-          fetch('/api/state')
-        ]);
-        const health = await healthRes.json();
-        state = await stateRes.json();
-        document.getElementById('apiStatus').textContent = `Connected: ${health.service} • Server Time: ${new Date(health.timestamp).toLocaleString()}`;
-        renderAll();
-      } catch (err) {
-        document.getElementById('apiStatus').textContent = 'Running in standalone mode (API unreachable)';
+    async function apiFetch(endpoint, options = {}) {
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(options.headers || {}),
+      };
+      const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+      if (res.status === 401) {
+        logout();
+        throw new Error('Session expired. Please log in again.');
+      }
+      const json = await res.json();
+      if (!res.ok || json.success === false) {
+        throw new Error(json.message || 'Request failed');
+      }
+      return json.data ?? json;
+    }
+
+    function setAuthState(isLoggedIn, user = null) {
+      if (isLoggedIn) {
+        loginView.classList.add('hidden');
+        appView.classList.remove('hidden');
+        if (user) {
+          currentUserEl.textContent = `${user.full_name || user.username} (${user.role || 'User'})`;
+        }
+        loadTab(activeTab);
+      } else {
+        appView.classList.add('hidden');
+        loginView.classList.remove('hidden');
       }
     }
 
-    async function resetTestDrive() {
-      await fetch('/api/reset-test-drive', { method: 'POST' });
-      await refreshState();
+    function logout() {
+      token = '';
+      localStorage.removeItem('bms_token');
+      setAuthState(false);
     }
 
-    function renderAll() {
-      if (!state) return;
-      document.getElementById('kpiProjects').textContent = state.projects.length;
-      document.getElementById('kpiTasks').textContent = state.tasks.length;
-      document.getElementById('kpiCrm').textContent = state.crmDeals.length;
-      document.getElementById('kpiAtt').textContent = state.attendanceLogs.length;
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.classList.add('hidden');
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
 
-      document.getElementById('bioToggleBtn').textContent = `Biometric Device Sync: ${state.biometricDeviceEnabled ? 'ON' : 'OFF'}`;
+      try {
+        const data = await apiFetch('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ username, password }),
+        });
+        token = data.token || data.accessToken || '';
+        localStorage.setItem('bms_token', token);
+        setAuthState(true, data.user || { username });
+      } catch (err) {
+        loginError.textContent = err.message;
+        loginError.classList.remove('hidden');
+      }
+    });
 
-      ['attEmployee', 'payEmployee'].forEach(id => {
-        const el = document.getElementById(id);
-        el.innerHTML = state.employees.map(e => `<option value="${e.id}">${e.id} - ${e.name}</option>`).join('');
+    document.getElementById('logout-btn').addEventListener('click', logout);
+    document.getElementById('refresh-btn').addEventListener('click', () => loadTab(activeTab));
+
+    document.querySelectorAll('.nav-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-btn').forEach((b) => {
+          b.classList.remove('bg-indigo-600', 'text-white', 'font-medium');
+          b.classList.add('hover:bg-slate-800');
+        });
+        btn.classList.add('bg-indigo-600', 'text-white', 'font-medium');
+        btn.classList.remove('hover:bg-slate-800');
+        loadTab(btn.dataset.tab);
       });
+    });
 
-      const filterEmp = document.getElementById('filterEmp');
-      const currentFilter = filterEmp.value || 'ALL';
-      filterEmp.innerHTML = `<option value="ALL">All Employees</option>` +
-        state.employees.map(e => `<option value="${e.id}">${e.id} - ${e.name}</option>`).join('');
-      filterEmp.value = currentFilter;
-
-      document.getElementById('empTableBody').innerHTML = state.employees.map(e => `
-        <tr><td>${e.id}</td><td>${e.name}</td><td>${e.designation}</td><td>${e.department}</td><td>${e.nid}</td><td>${e.bankAccount}</td></tr>
-      `).join('');
-
-      renderAttendanceTable();
-      renderPayslip();
-
-      document.getElementById('prjTableBody').innerHTML = state.projects.map(p => `
-        <tr>
-          <td>${p.code}</td>
-          <td>${p.name}</td>
-          <td><span class="badge">${p.vertical}</span></td>
-          <td>${Number(p.budget).toLocaleString()}</td>
-          <td>${p.isDefence && p.defenceMeta ? `${p.defenceMeta.directorateOrUnit} (${p.defenceMeta.tenderOrLoaRef}) — ${p.defenceMeta.clearanceStatus}` : 'Standard Project'}</td>
-          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/projects/${encodeURIComponent(p.code)}')">Delete</button></td>
-        </tr>
-      `).join('');
-
-      document.getElementById('tskTableBody').innerHTML = state.tasks.map(t => `
-        <tr>
-          <td>${t.id}</td>
-          <td>${t.title}</td>
-          <td>${t.linkedModule}</td>
-          <td>${t.priority}</td>
-          <td>${t.deadline}</td>
-          <td>
-            <select onchange="updateTaskStatus('${t.id}', this.value)">
-              <option ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
-              <option ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-              <option ${t.status === 'In Review' ? 'selected' : ''}>In Review</option>
-              <option ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
-            </select>
-          </td>
-          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/tasks/${encodeURIComponent(t.id)}')">Delete</button></td>
-        </tr>
-      `).join('');
-
-      document.getElementById('crmTableBody').innerHTML = state.crmDeals.map(c => `
-        <tr>
-          <td>${c.id}</td>
-          <td>${c.clientName}</td>
-          <td>${c.sector}</td>
-          <td>${c.tenderRef}</td>
-          <td>${Number(c.estimatedValue).toLocaleString()}</td>
-          <td>${c.stage}</td>
-          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/crm/${encodeURIComponent(c.id)}')">Delete</button></td>
-        </tr>
-      `).join('');
-
-      document.getElementById('invTableBody').innerHTML = state.inventoryItems.map(i => `
-        <tr>
-          <td>${i.sku}</td>
-          <td>${i.name}</td>
-          <td>${i.category}</td>
-          <td>${i.location}</td>
-          <td>${i.stockQty}</td>
-          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/inventory/${encodeURIComponent(i.sku)}')">Delete</button></td>
-        </tr>
-      `).join('');
-
-      document.getElementById('astTableBody').innerHTML = state.assets.map(a => `
-        <tr>
-          <td>${a.assetId}</td>
-          <td>${a.name}</td>
-          <td>${a.serialNo}</td>
-          <td>${a.assignedTo}</td>
-          <td>${a.condition}</td>
-          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/assets/${encodeURIComponent(a.assetId)}')">Delete</button></td>
-        </tr>
-      `).join('');
-
-      const coaList = state.chartOfAccounts || [];
-      document.getElementById('vchHead').innerHTML = coaList.map(c => `<option value="${c.name}">${c.code} - ${c.name} (${c.type})</option>`).join('');
-
-      const fin = state.financeSummary || { totalDebit: 0, totalCredit: 0, netCashFlow: 0, trialBalance: [] };
-      document.getElementById('finDebit').textContent = Number(fin.totalDebit).toLocaleString();
-      document.getElementById('finCredit').textContent = Number(fin.totalCredit).toLocaleString();
-      document.getElementById('finNet').textContent = Number(fin.netCashFlow).toLocaleString();
-      document.getElementById('finCoaCount').textContent = coaList.length;
-
-      document.getElementById('vchTableBody').innerHTML = state.vouchers.map(v => `
-        <tr>
-          <td>${v.id}</td>
-          <td>${v.type}</td>
-          <td>${v.head}</td>
-          <td>${v.date}</td>
-          <td>${Number(v.amount).toLocaleString()}</td>
-          <td>${v.note}</td>
-          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/vouchers/${encodeURIComponent(v.id)}')">Delete</button></td>
-        </tr>
-      `).join('');
-
-      document.getElementById('tbTableBody').innerHTML = fin.trialBalance.length
-        ? fin.trialBalance.map(row => `
-            <tr>
-              <td>${row.head}</td>
-              <td>${Number(row.debit).toLocaleString()}</td>
-              <td>${Number(row.credit).toLocaleString()}</td>
-              <td>${Number(row.net).toLocaleString()}</td>
-            </tr>
-          `).join('')
-        : `<tr><td colspan="4" class="muted">No ledger entries yet.</td></tr>`;
-
-      document.getElementById('rndTableBody').innerHTML = state.rndItems.map(r => `
-        <tr>
-          <td>${r.id}</td>
-          <td>${r.topic}</td>
-          <td>${r.vertical}</td>
-          <td>${Number(r.expense).toLocaleString()}</td>
-          <td>${r.status}</td>
-          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/rnd/${encodeURIComponent(r.id)}')">Delete</button></td>
-        </tr>
-      `).join('');
-    }
-
-    function renderAttendanceTable() {
-      if (!state) return;
-      const empVal = document.getElementById('filterEmp').value;
-      const dateVal = document.getElementById('filterDate').value;
-      const rows = state.attendanceLogs.filter(log => {
-        const matchEmp = empVal === 'ALL' || log.employeeId === empVal;
-        const matchDate = !dateVal || log.date === dateVal;
-        return matchEmp && matchDate;
-      });
-      document.getElementById('attTableBody').innerHTML = rows.length
-        ? rows.map(r => `<tr><td>${r.id}</td><td>${r.employeeName} (${r.employeeId})</td><td>${r.action}</td><td>${r.date}</td><td>${r.time}</td></tr>`).join('')
-        : `<tr><td colspan="5" class="muted">No attendance records match the selected filter.</td></tr>`;
-    }
-
-    function renderPayslip() {
-      if (!state) return;
-      const empId = document.getElementById('payEmployee').value;
-      const emp = state.employees.find(e => e.id === empId) || state.employees[0];
-      const basic = Number(emp.basicSalary || 0);
-      const houseRent = basic * 0.5;
-      const medical = basic * 0.15;
-      const mobile = Number(document.getElementById('payMobile').value || 0);
-      const conveyance = Number(document.getElementById('payConveyance').value || 0);
-      const gross = basic + houseRent + medical + mobile + conveyance;
-
-      document.getElementById('payslipBox').innerHTML = `
-        <strong>Monthly Salary Receipt — ${emp.name} (${emp.id})</strong><br/>
-        Basic (100%): ${basic.toLocaleString()} BDT<br/>
-        House Rent (50%): ${houseRent.toLocaleString()} BDT<br/>
-        Medical (15%): ${medical.toLocaleString()} BDT<br/>
-        Mobile Allowance: ${mobile.toLocaleString()} BDT<br/>
-        Conveyance: ${conveyance.toLocaleString()} BDT<br/>
-        <strong>Total Payable: ${gross.toLocaleString()} BDT</strong>
+    function statCard(label, value, sub = '') {
+      return `
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs">
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wide">${label}</div>
+          <div class="text-2xl font-bold text-slate-900 mt-1">${value ?? 0}</div>
+          ${sub ? `<div class="text-xs text-slate-400 mt-1">${sub}</div>` : ''}
+        </div>
       `;
     }
 
-    async function addEmployee() {
-      await fetch('/api/employees', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: document.getElementById('empName').value,
-          designation: document.getElementById('empDesig').value,
-          department: document.getElementById('empDept').value,
-          nid: document.getElementById('empNid').value,
-          bankAccount: document.getElementById('empBank').value,
-          basicSalary: document.getElementById('empBasic').value
-        })
-      });
-      await refreshState();
+    function renderTable(headers, rows) {
+      if (!rows || !rows.length) {
+        return `<div class="bg-white rounded-xl border border-slate-200 p-6 text-sm text-slate-500">No records found.</div>`;
+      }
+      return `
+        <div class="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-2xs">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600">
+              <tr>${headers.map((h) => `<th class="py-3 px-4 font-semibold">${h}</th>`).join('')}</tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              ${rows.map((r) => `<tr>${r.map((c) => `<td class="py-3 px-4">${c ?? '-'}</td>`).join('')}</tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
     }
 
-    async function recordAttendance(action) {
-      const empId = document.getElementById('attEmployee').value;
-      const emp = state.employees.find(e => e.id === empId);
-      await fetch('/api/attendance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ employeeId: emp.id, employeeName: emp.name, action })
-      });
-      await refreshState();
+    async function loadTab(tab) {
+      activeTab = tab;
+      contentArea.innerHTML = `<div class="text-sm text-slate-500">Loading ${tab}...</div>`;
+
+      try {
+        if (tab === 'dashboard') {
+          pageTitle.textContent = 'Executive Dashboard';
+          pageSubtitle.textContent = 'Consolidated metrics across HR, Projects, CRM, Inventory, Finance & R&D';
+          const d = await apiFetch('/reports/dashboard');
+          contentArea.innerHTML = `
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              ${statCard('Active Employees', d.hr?.active_employees, `Payroll: ${d.hr?.monthly_base_payroll ?? 0}`)}
+              ${statCard('Active Projects', d.projects?.active_projects, `Defence: ${d.projects?.defence_projects ?? 0}`)}
+              ${statCard('Open CRM Pipeline', d.crm?.open_pipeline_value, `Open Leads: ${d.crm?.open_leads ?? 0}`)}
+              ${statCard('Inventory Valuation', d.inventory?.inventory_valuation, `Low Stock: ${d.inventory?.low_stock_items ?? 0}`)}
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-base font-semibold text-slate-800 mb-2">Recent Audit Logs</h3>
+                ${renderTable(
+                  ['Actor', 'Module', 'Action', 'Entity'],
+                  (d.recent_audit || []).map((a) => [a.actor_username, a.module_key, a.action, `${a.entity_type} #${a.entity_id ?? ''}`])
+                )}
+              </div>
+              <div>
+                <h3 class="text-base font-semibold text-slate-800 mb-2">Recent Notifications</h3>
+                ${renderTable(
+                  ['Module', 'Title', 'Message'],
+                  (d.notifications || []).map((n) => [n.module_key, n.title, n.message])
+                )}
+              </div>
+            </div>
+          `;
+        } else if (tab === 'hr') {
+          pageTitle.textContent = 'HR & Payroll';
+          pageSubtitle.textContent = 'Employee directory and workforce records';
+          const list = await apiFetch('/hr/employees');
+          const rows = Array.isArray(list) ? list : list.employees || [];
+          contentArea.innerHTML = renderTable(
+            ['ID', 'Name', 'Department', 'Designation', 'Status', 'Base Salary'],
+            rows.map((e) => [e.id, e.full_name, e.department_name || e.department_id, e.designation, e.status, e.base_salary])
+          );
+        } else if (tab === 'projects') {
+          pageTitle.textContent = 'Projects';
+          pageSubtitle.textContent = 'Commercial and defence projects, budgets, and progress';
+          const list = await apiFetch('/projects');
+          const rows = Array.isArray(list) ? list : list.projects || [];
+          contentArea.innerHTML = renderTable(
+            ['ID', 'Code / Name', 'Defence', 'Status', 'Budget', 'Spent'],
+            rows.map((p) => [p.id, p.name || p.title, p.is_defence_project ? 'Yes' : 'No', p.status, p.budget_amount, p.spent_amount])
+          );
+        } else if (tab === 'tasks') {
+          pageTitle.textContent = 'Task Management';
+          pageSubtitle.textContent = 'Tracked deliverables and execution statuses';
+          const list = await apiFetch('/tasks');
+          const rows = Array.isArray(list) ? list : list.tasks || [];
+          contentArea.innerHTML = renderTable(
+            ['ID', 'Title', 'Status', 'Priority', 'Assignee'],
+            rows.map((t) => [t.id, t.title, t.status, t.priority, t.assignee_name || t.assigned_to])
+          );
+        } else if (tab === 'crm') {
+          pageTitle.textContent = 'CRM & Leads';
+          pageSubtitle.textContent = 'Sales pipeline and client opportunities';
+          const list = await apiFetch('/crm/leads');
+          const rows = Array.isArray(list) ? list : list.leads || [];
+          contentArea.innerHTML = renderTable(
+            ['ID', 'Title / Company', 'Stage', 'Estimated Value'],
+            rows.map((l) => [l.id, l.title || l.company_name, l.stage, l.estimated_value])
+          );
+        } else if (tab === 'inventory') {
+          pageTitle.textContent = 'Inventory & Assets';
+          pageSubtitle.textContent = 'Stock levels, SKUs, and reorder thresholds';
+          const list = await apiFetch('/inventory/items');
+          const rows = Array.isArray(list) ? list : list.items || [];
+          contentArea.innerHTML = renderTable(
+            ['SKU', 'Item Name', 'Current Stock', 'Reorder Level', 'Unit Cost'],
+            rows.map((i) => [i.sku, i.name, i.current_stock, i.reorder_level, i.unit_cost])
+          );
+        } else if (tab === 'finance') {
+          pageTitle.textContent = 'Accounts & Finance';
+          pageSubtitle.textContent = 'Accounting vouchers and ledger postings';
+          const list = await apiFetch('/finance/vouchers');
+          const rows = Array.isArray(list) ? list : list.vouchers || [];
+          contentArea.innerHTML = renderTable(
+            ['ID', 'Voucher No', 'Date', 'Status', 'Total Debit'],
+            rows.map((v) => [v.id, v.voucher_no || v.reference_no, v.voucher_date, v.status, v.total_debit])
+          );
+        } else if (tab === 'rnd') {
+          pageTitle.textContent = 'R&D Initiatives';
+          pageSubtitle.textContent = 'Research stages and allocated budgets';
+          const list = await apiFetch('/rnd');
+          const rows = Array.isArray(list) ? list : list.initiatives || [];
+          contentArea.innerHTML = renderTable(
+            ['ID', 'Title', 'Stage', 'Budget Allocated'],
+            rows.map((r) => [r.id, r.title || r.name, r.stage, r.budget_allocated])
+          );
+        }
+      } catch (err) {
+        contentArea.innerHTML = `
+          <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm">
+            ${err.message}
+          </div>
+        `;
+      }
     }
 
-    async function toggleBiometric() {
-      const nextVal = !state.biometricDeviceEnabled;
-      await fetch('/api/settings/biometric', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enabled: nextVal })
-      });
-      await refreshState();
+    if (token) {
+      apiFetch('/auth/me')
+        .then((user) => setAuthState(true, user.user || user))
+        .catch(() => logout());
+    } else {
+      setAuthState(false);
     }
-
-    async function addProject() {
-      const isDefence = document.getElementById('prjIsDefence').checked;
-      await fetch('/api/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          code: document.getElementById('prjCode').value,
-          name: document.getElementById('prjName').value,
-          vertical: document.getElementById('prjVertical').value,
-          budget: document.getElementById('prjBudget').value,
-          isDefence,
-          defenceMeta: isDefence ? {
-            directorateOrUnit: document.getElementById('defDir').value || 'Defence Unit',
-            tenderOrLoaRef: document.getElementById('defRef').value || 'N/A',
-            clearanceStatus: document.getElementById('defSec').value || 'Pending'
-          } : null
-        })
-      });
-      await refreshState();
-    }
-
-    async function addTask() {
-      await fetch('/api/tasks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: document.getElementById('tskTitle').value,
-          linkedModule: document.getElementById('tskModule').value,
-          priority: document.getElementById('tskPriority').value,
-          deadline: document.getElementById('tskDeadline').value
-        })
-      });
-      await refreshState();
-    }
-
-    async function updateTaskStatus(id, status) {
-      await fetch(`/api/tasks/${encodeURIComponent(id)}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
-      });
-      await refreshState();
-    }
-
-    async function deleteItem(url) {
-      await fetch(url, { method: 'DELETE' });
-      await refreshState();
-    }
-
-    async function addCrm() {
-      await fetch('/api/crm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          clientName: document.getElementById('crmClient').value,
-          sector: document.getElementById('crmSector').value,
-          tenderRef: document.getElementById('crmRef').value,
-          estimatedValue: document.getElementById('crmValue').value
-        })
-      });
-      await refreshState();
-    }
-
-    async function addInventory() {
-      await fetch('/api/inventory', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sku: document.getElementById('invSku').value,
-          name: document.getElementById('invName').value,
-          category: document.getElementById('invCat').value,
-          stockQty: document.getElementById('invQty').value
-        })
-      });
-      await refreshState();
-    }
-
-    async function addAsset() {
-      await fetch('/api/assets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          assetId: document.getElementById('astId').value,
-          name: document.getElementById('astName').value,
-          serialNo: document.getElementById('astSerial').value,
-          assignedTo: document.getElementById('astAssign').value
-        })
-      });
-      await refreshState();
-    }
-
-    async function addVoucher() {
-      await fetch('/api/vouchers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: document.getElementById('vchType').value,
-          head: document.getElementById('vchHead').value,
-          amount: document.getElementById('vchAmount').value,
-          note: document.getElementById('vchNote').value
-        })
-      });
-      await refreshState();
-    }
-
-    async function addRnd() {
-      await fetch('/api/rnd', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topic: document.getElementById('rndTopic').value,
-          vertical: document.getElementById('rndVertical').value,
-          expense: document.getElementById('rndExpense').value,
-          status: document.getElementById('rndStatus').value
-        })
-      });
-      await refreshState();
-    }
-
-    refreshState();
   </script>
 </body>
 </html>
