@@ -13,8 +13,6 @@
       --primary: #0f2942;
       --accent: #0e7490;
       --border: #e2e8f0;
-      --success: #15803d;
-      --warn: #b45309;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,9 +58,6 @@
       border-radius: 8px;
       cursor: pointer;
       font-size: 0.9rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       transition: background 0.15s;
     }
 
@@ -132,7 +127,7 @@
 
     .row-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
-    input, select, textarea {
+    input, select {
       width: 100%;
       padding: 8px 10px;
       border: 1px solid var(--border);
@@ -252,6 +247,29 @@
         </div>
 
         <div class="card">
+          <h2>Add Employee Profile</h2>
+          <div class="grid-2">
+            <div>
+              <label>Full Name</label>
+              <input id="empName" placeholder="Employee Name" />
+              <label>Designation</label>
+              <input id="empDesig" placeholder="Software / Supply / Admin" />
+              <label>Department</label>
+              <input id="empDept" placeholder="Operations" />
+            </div>
+            <div>
+              <label>NID</label>
+              <input id="empNid" placeholder="NID Number" />
+              <label>Bank Account</label>
+              <input id="empBank" placeholder="Account Number" />
+              <label>Basic Salary (BDT)</label>
+              <input type="number" id="empBasic" value="20000" />
+            </div>
+          </div>
+          <div style="margin-top: 14px;"><button class="btn" onclick="addEmployee()">Add Employee</button></div>
+        </div>
+
+        <div class="card">
           <h2>Attendance History & Filter</h2>
           <div class="grid-2" style="margin-bottom: 8px;">
             <div>
@@ -361,6 +379,28 @@
       <!-- 4. BD / CRM -->
       <section id="crm" class="panel">
         <div class="card">
+          <h2>Add Client / Tender / RFQ Opportunity</h2>
+          <div class="grid-2">
+            <div>
+              <label>Client / Organization Name</label>
+              <input id="crmClient" placeholder="Defence or Private Client" />
+              <label>Sector</label>
+              <select id="crmSector">
+                <option>Defence Sector</option>
+                <option>Private Sector</option>
+                <option>Consultancy / Software</option>
+              </select>
+            </div>
+            <div>
+              <label>Tender / RFQ Reference</label>
+              <input id="crmRef" placeholder="RFQ-2026-10" />
+              <label>Estimated Value (BDT)</label>
+              <input type="number" id="crmValue" value="500000" />
+            </div>
+          </div>
+          <div style="margin-top: 14px;"><button class="btn" onclick="addCrm()">Save Opportunity</button></div>
+        </div>
+        <div class="card">
           <h2>BD / CRM — Clients, Tenders & Quotations</h2>
           <table>
             <thead><tr><th>ID</th><th>Client</th><th>Sector</th><th>Tender / RFQ</th><th>Est. Value</th><th>Stage</th></tr></thead>
@@ -371,6 +411,34 @@
 
       <!-- 5. INVENTORY & ASSET -->
       <section id="inventory" class="panel">
+        <div class="grid-2">
+          <div class="card">
+            <h2>Add Inventory Stock Item</h2>
+            <label>Item SKU</label>
+            <input id="invSku" placeholder="INV-302" />
+            <label>Item Name</label>
+            <input id="invName" placeholder="Signal Cable / Sensor Module" />
+            <label>Category</label>
+            <input id="invCat" value="Defence / Hardware Supply" />
+            <label>Stock Qty</label>
+            <input type="number" id="invQty" value="10" />
+            <div style="margin-top: 14px;"><button class="btn" onclick="addInventory()">Add Stock Item</button></div>
+          </div>
+
+          <div class="card">
+            <h2>Add Fixed Asset</h2>
+            <label>Asset ID</label>
+            <input id="astId" placeholder="AST-402" />
+            <label>Asset Name</label>
+            <input id="astName" placeholder="Lab Oscilloscope / Laptop" />
+            <label>Serial No.</label>
+            <input id="astSerial" placeholder="SN-19A-402" />
+            <label>Assigned To</label>
+            <input id="astAssign" value="Masum Rana" />
+            <div style="margin-top: 14px;"><button class="btn secondary" onclick="addAsset()">Register Asset</button></div>
+          </div>
+        </div>
+
         <div class="card">
           <h2>Inventory Stock</h2>
           <table>
@@ -389,6 +457,13 @@
 
       <!-- 6. ACCOUNT & FINANCE -->
       <section id="finance" class="panel">
+        <div class="grid-4">
+          <div class="card"><span class="muted">Total Debit (BDT)</span><div class="kpi" id="finDebit">0</div></div>
+          <div class="card"><span class="muted">Total Credit (BDT)</span><div class="kpi" id="finCredit">0</div></div>
+          <div class="card"><span class="muted">Net Balance (BDT)</span><div class="kpi" id="finNet">0</div></div>
+          <div class="card"><span class="muted">CoA Heads</span><div class="kpi" id="finCoaCount">0</div></div>
+        </div>
+
         <div class="card">
           <h2>Record Voucher (Debit / Credit)</h2>
           <div class="grid-2">
@@ -396,7 +471,7 @@
               <label>Voucher Type</label>
               <select id="vchType"><option>Debit Voucher</option><option>Credit Voucher</option></select>
               <label>Account Head (Chart of Accounts)</label>
-              <input id="vchHead" value="Project & Supply Expense" />
+              <select id="vchHead"></select>
             </div>
             <div>
               <label>Amount (BDT)</label>
@@ -407,17 +482,45 @@
           </div>
           <div style="margin-top: 14px;"><button class="btn" onclick="addVoucher()">Save Voucher</button></div>
         </div>
+
         <div class="card">
-          <h2>Vouchers & General Ledger Summary</h2>
+          <h2>Vouchers & General Ledger Entries</h2>
           <table>
             <thead><tr><th>ID</th><th>Type</th><th>Account Head</th><th>Date</th><th>Amount (BDT)</th><th>Note</th></tr></thead>
             <tbody id="vchTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h2>Trial Balance & Chart of Accounts Summary</h2>
+          <table>
+            <thead><tr><th>Account Head</th><th>Debit (BDT)</th><th>Credit (BDT)</th><th>Net (BDT)</th></tr></thead>
+            <tbody id="tbTableBody"></tbody>
           </table>
         </div>
       </section>
 
       <!-- 7. R & D -->
       <section id="rnd" class="panel">
+        <div class="card">
+          <h2>Add R&D Initiative / Prototype</h2>
+          <div class="grid-2">
+            <div>
+              <label>Topic / Prototype</label>
+              <input id="rndTopic" placeholder="Drone Jammer RF Module / AI Medical Triage" />
+              <label>Vertical</label>
+              <input id="rndVertical" value="Defence Tech / AI Healthcare" />
+            </div>
+            <div>
+              <label>Estimated Expense (BDT)</label>
+              <input type="number" id="rndExpense" value="25000" />
+              <label>Status</label>
+              <select id="rndStatus"><option>In Research</option><option>Prototype Testing</option><option>Validated</option></select>
+            </div>
+          </div>
+          <div style="margin-top: 14px;"><button class="btn" onclick="addRnd()">Add R&D Item</button></div>
+        </div>
+
         <div class="card">
           <h2>Research & Development (R&D) Tracker</h2>
           <table>
@@ -464,11 +567,9 @@
       document.getElementById('kpiCrm').textContent = state.crmDeals.length;
       document.getElementById('kpiAtt').textContent = state.attendanceLogs.length;
 
-      const bioBtn = document.getElementById('bioToggleBtn');
-      bioBtn.textContent = `Biometric Device Sync: ${state.biometricDeviceEnabled ? 'ON' : 'OFF'}`;
+      document.getElementById('bioToggleBtn').textContent = `Biometric Device Sync: ${state.biometricDeviceEnabled ? 'ON' : 'OFF'}`;
 
-      const empSelects = ['attEmployee', 'payEmployee'];
-      empSelects.forEach(id => {
+      ['attEmployee', 'payEmployee'].forEach(id => {
         const el = document.getElementById(id);
         el.innerHTML = state.employees.map(e => `<option value="${e.id}">${e.id} - ${e.name}</option>`).join('');
       });
@@ -512,9 +613,29 @@
         <tr><td>${a.assetId}</td><td>${a.name}</td><td>${a.serialNo}</td><td>${a.assignedTo}</td><td>${a.condition}</td></tr>
       `).join('');
 
+      const coaList = state.chartOfAccounts || [];
+      document.getElementById('vchHead').innerHTML = coaList.map(c => `<option value="${c.name}">${c.code} - ${c.name} (${c.type})</option>`).join('');
+
+      const fin = state.financeSummary || { totalDebit: 0, totalCredit: 0, netCashFlow: 0, trialBalance: [] };
+      document.getElementById('finDebit').textContent = Number(fin.totalDebit).toLocaleString();
+      document.getElementById('finCredit').textContent = Number(fin.totalCredit).toLocaleString();
+      document.getElementById('finNet').textContent = Number(fin.netCashFlow).toLocaleString();
+      document.getElementById('finCoaCount').textContent = coaList.length;
+
       document.getElementById('vchTableBody').innerHTML = state.vouchers.map(v => `
         <tr><td>${v.id}</td><td>${v.type}</td><td>${v.head}</td><td>${v.date}</td><td>${Number(v.amount).toLocaleString()}</td><td>${v.note}</td></tr>
       `).join('');
+
+      document.getElementById('tbTableBody').innerHTML = fin.trialBalance.length
+        ? fin.trialBalance.map(row => `
+            <tr>
+              <td>${row.head}</td>
+              <td>${Number(row.debit).toLocaleString()}</td>
+              <td>${Number(row.credit).toLocaleString()}</td>
+              <td>${Number(row.net).toLocaleString()}</td>
+            </tr>
+          `).join('')
+        : `<tr><td colspan="4" class="muted">No ledger entries yet.</td></tr>`;
 
       document.getElementById('rndTableBody').innerHTML = state.rndItems.map(r => `
         <tr><td>${r.id}</td><td>${r.topic}</td><td>${r.vertical}</td><td>${Number(r.expense).toLocaleString()}</td><td>${r.status}</td></tr>
@@ -555,6 +676,22 @@
         Conveyance: ${conveyance.toLocaleString()} BDT<br/>
         <strong>Total Payable: ${gross.toLocaleString()} BDT</strong>
       `;
+    }
+
+    async function addEmployee() {
+      await fetch('/api/employees', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: document.getElementById('empName').value,
+          designation: document.getElementById('empDesig').value,
+          department: document.getElementById('empDept').value,
+          nid: document.getElementById('empNid').value,
+          bankAccount: document.getElementById('empBank').value,
+          basicSalary: document.getElementById('empBasic').value
+        })
+      });
+      await refreshState();
     }
 
     async function recordAttendance(action) {
@@ -613,6 +750,48 @@
       await refreshState();
     }
 
+    async function addCrm() {
+      await fetch('/api/crm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clientName: document.getElementById('crmClient').value,
+          sector: document.getElementById('crmSector').value,
+          tenderRef: document.getElementById('crmRef').value,
+          estimatedValue: document.getElementById('crmValue').value
+        })
+      });
+      await refreshState();
+    }
+
+    async function addInventory() {
+      await fetch('/api/inventory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sku: document.getElementById('invSku').value,
+          name: document.getElementById('invName').value,
+          category: document.getElementById('invCat').value,
+          stockQty: document.getElementById('invQty').value
+        })
+      });
+      await refreshState();
+    }
+
+    async function addAsset() {
+      await fetch('/api/assets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          assetId: document.getElementById('astId').value,
+          name: document.getElementById('astName').value,
+          serialNo: document.getElementById('astSerial').value,
+          assignedTo: document.getElementById('astAssign').value
+        })
+      });
+      await refreshState();
+    }
+
     async function addVoucher() {
       await fetch('/api/vouchers', {
         method: 'POST',
@@ -622,6 +801,20 @@
           head: document.getElementById('vchHead').value,
           amount: document.getElementById('vchAmount').value,
           note: document.getElementById('vchNote').value
+        })
+      });
+      await refreshState();
+    }
+
+    async function addRnd() {
+      await fetch('/api/rnd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: document.getElementById('rndTopic').value,
+          vertical: document.getElementById('rndVertical').value,
+          expense: document.getElementById('rndExpense').value,
+          status: document.getElementById('rndStatus').value
         })
       });
       await refreshState();
