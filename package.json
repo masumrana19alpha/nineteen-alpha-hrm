@@ -1,16 +1,40 @@
 {
   "name": "nineteen-alpha-bms",
   "version": "1.0.0",
-  "description": "Nineteen Alpha Internal Business Management System (BMS) - Test Drive",
+  "description": "Nineteen Alpha Integrated Business Management System (BMS) — Enterprise ERP Platform",
   "main": "server.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "migrate": "node scripts/migrate.js",
+    "test": "node --test tests/integration.test.js"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "express": "^4.21.2"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "pdfkit": "^0.16.0",
+    "pg": "^8.13.1",
+    "uuid": "^11.0.3",
+    "zod": "^3.24.1"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  }
+  "keywords": [
+    "nineteen-alpha",
+    "bms",
+    "erp",
+    "defence-management",
+    "hr-payroll",
+    "accounting",
+    "inventory"
+  ],
+  "author": "Nineteen Alpha, Dhaka-1216, Bangladesh",
+  "license": "PROPRIETARY"
 }
+
