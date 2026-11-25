@@ -13,6 +13,7 @@
       --primary: #0f2942;
       --accent: #0e7490;
       --border: #e2e8f0;
+      --danger: #b91c1c;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -124,6 +125,7 @@
     .btn:hover { opacity: 0.92; }
     .btn.secondary { background: var(--accent); }
     .btn.outline { background: transparent; color: var(--ink); border: 1px solid var(--border); }
+    .btn.danger { background: var(--danger); padding: 5px 10px; font-size: 0.78rem; }
 
     .row-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
@@ -136,6 +138,8 @@
       background: #fff;
       color: var(--ink);
     }
+
+    table select { width: auto; padding: 5px 8px; font-size: 0.8rem; }
 
     label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; margin-top: 10px; }
 
@@ -197,6 +201,7 @@
         </div>
         <div class="row-actions">
           <button class="btn outline" onclick="window.print()">Print / Save PDF</button>
+          <button class="btn outline" onclick="resetTestDrive()">Reset Test Drive</button>
           <button class="btn secondary" onclick="refreshState()">Sync Data</button>
         </div>
       </div>
@@ -340,7 +345,7 @@
           <h2>Projects Directory</h2>
           <table>
             <thead>
-              <tr><th>Code</th><th>Name</th><th>Vertical</th><th>Budget</th><th>Defence / Compliance Ref</th></tr>
+              <tr><th>Code</th><th>Name</th><th>Vertical</th><th>Budget</th><th>Defence / Compliance Ref</th><th class="no-print">Action</th></tr>
             </thead>
             <tbody id="prjTableBody"></tbody>
           </table>
@@ -370,7 +375,7 @@
         <div class="card">
           <h2>Tasks List</h2>
           <table>
-            <thead><tr><th>ID</th><th>Title</th><th>Module</th><th>Priority</th><th>Deadline</th><th>Status</th></tr></thead>
+            <thead><tr><th>ID</th><th>Title</th><th>Module</th><th>Priority</th><th>Deadline</th><th>Status</th><th class="no-print">Action</th></tr></thead>
             <tbody id="tskTableBody"></tbody>
           </table>
         </div>
@@ -403,7 +408,7 @@
         <div class="card">
           <h2>BD / CRM — Clients, Tenders & Quotations</h2>
           <table>
-            <thead><tr><th>ID</th><th>Client</th><th>Sector</th><th>Tender / RFQ</th><th>Est. Value</th><th>Stage</th></tr></thead>
+            <thead><tr><th>ID</th><th>Client</th><th>Sector</th><th>Tender / RFQ</th><th>Est. Value</th><th>Stage</th><th class="no-print">Action</th></tr></thead>
             <tbody id="crmTableBody"></tbody>
           </table>
         </div>
@@ -442,14 +447,14 @@
         <div class="card">
           <h2>Inventory Stock</h2>
           <table>
-            <thead><tr><th>SKU</th><th>Item Name</th><th>Category</th><th>Location</th><th>Stock Qty</th></tr></thead>
+            <thead><tr><th>SKU</th><th>Item Name</th><th>Category</th><th>Location</th><th>Stock Qty</th><th class="no-print">Action</th></tr></thead>
             <tbody id="invTableBody"></tbody>
           </table>
         </div>
         <div class="card">
           <h2>Fixed Asset Register</h2>
           <table>
-            <thead><tr><th>Asset ID</th><th>Asset Name</th><th>Serial No.</th><th>Assigned To</th><th>Condition</th></tr></thead>
+            <thead><tr><th>Asset ID</th><th>Asset Name</th><th>Serial No.</th><th>Assigned To</th><th>Condition</th><th class="no-print">Action</th></tr></thead>
             <tbody id="astTableBody"></tbody>
           </table>
         </div>
@@ -486,7 +491,7 @@
         <div class="card">
           <h2>Vouchers & General Ledger Entries</h2>
           <table>
-            <thead><tr><th>ID</th><th>Type</th><th>Account Head</th><th>Date</th><th>Amount (BDT)</th><th>Note</th></tr></thead>
+            <thead><tr><th>ID</th><th>Type</th><th>Account Head</th><th>Date</th><th>Amount (BDT)</th><th>Note</th><th class="no-print">Action</th></tr></thead>
             <tbody id="vchTableBody"></tbody>
           </table>
         </div>
@@ -524,7 +529,7 @@
         <div class="card">
           <h2>Research & Development (R&D) Tracker</h2>
           <table>
-            <thead><tr><th>ID</th><th>Topic / Prototype</th><th>Vertical</th><th>Expense (BDT)</th><th>Status</th></tr></thead>
+            <thead><tr><th>ID</th><th>Topic / Prototype</th><th>Vertical</th><th>Expense (BDT)</th><th>Status</th><th class="no-print">Action</th></tr></thead>
             <tbody id="rndTableBody"></tbody>
           </table>
         </div>
@@ -558,6 +563,11 @@
       } catch (err) {
         document.getElementById('apiStatus').textContent = 'Running in standalone mode (API unreachable)';
       }
+    }
+
+    async function resetTestDrive() {
+      await fetch('/api/reset-test-drive', { method: 'POST' });
+      await refreshState();
     }
 
     function renderAll() {
@@ -594,23 +604,61 @@
           <td><span class="badge">${p.vertical}</span></td>
           <td>${Number(p.budget).toLocaleString()}</td>
           <td>${p.isDefence && p.defenceMeta ? `${p.defenceMeta.directorateOrUnit} (${p.defenceMeta.tenderOrLoaRef}) — ${p.defenceMeta.clearanceStatus}` : 'Standard Project'}</td>
+          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/projects/${encodeURIComponent(p.code)}')">Delete</button></td>
         </tr>
       `).join('');
 
       document.getElementById('tskTableBody').innerHTML = state.tasks.map(t => `
-        <tr><td>${t.id}</td><td>${t.title}</td><td>${t.linkedModule}</td><td>${t.priority}</td><td>${t.deadline}</td><td>${t.status}</td></tr>
+        <tr>
+          <td>${t.id}</td>
+          <td>${t.title}</td>
+          <td>${t.linkedModule}</td>
+          <td>${t.priority}</td>
+          <td>${t.deadline}</td>
+          <td>
+            <select onchange="updateTaskStatus('${t.id}', this.value)">
+              <option ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
+              <option ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+              <option ${t.status === 'In Review' ? 'selected' : ''}>In Review</option>
+              <option ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
+            </select>
+          </td>
+          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/tasks/${encodeURIComponent(t.id)}')">Delete</button></td>
+        </tr>
       `).join('');
 
       document.getElementById('crmTableBody').innerHTML = state.crmDeals.map(c => `
-        <tr><td>${c.id}</td><td>${c.clientName}</td><td>${c.sector}</td><td>${c.tenderRef}</td><td>${Number(c.estimatedValue).toLocaleString()}</td><td>${c.stage}</td></tr>
+        <tr>
+          <td>${c.id}</td>
+          <td>${c.clientName}</td>
+          <td>${c.sector}</td>
+          <td>${c.tenderRef}</td>
+          <td>${Number(c.estimatedValue).toLocaleString()}</td>
+          <td>${c.stage}</td>
+          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/crm/${encodeURIComponent(c.id)}')">Delete</button></td>
+        </tr>
       `).join('');
 
       document.getElementById('invTableBody').innerHTML = state.inventoryItems.map(i => `
-        <tr><td>${i.sku}</td><td>${i.name}</td><td>${i.category}</td><td>${i.location}</td><td>${i.stockQty}</td></tr>
+        <tr>
+          <td>${i.sku}</td>
+          <td>${i.name}</td>
+          <td>${i.category}</td>
+          <td>${i.location}</td>
+          <td>${i.stockQty}</td>
+          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/inventory/${encodeURIComponent(i.sku)}')">Delete</button></td>
+        </tr>
       `).join('');
 
       document.getElementById('astTableBody').innerHTML = state.assets.map(a => `
-        <tr><td>${a.assetId}</td><td>${a.name}</td><td>${a.serialNo}</td><td>${a.assignedTo}</td><td>${a.condition}</td></tr>
+        <tr>
+          <td>${a.assetId}</td>
+          <td>${a.name}</td>
+          <td>${a.serialNo}</td>
+          <td>${a.assignedTo}</td>
+          <td>${a.condition}</td>
+          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/assets/${encodeURIComponent(a.assetId)}')">Delete</button></td>
+        </tr>
       `).join('');
 
       const coaList = state.chartOfAccounts || [];
@@ -623,7 +671,15 @@
       document.getElementById('finCoaCount').textContent = coaList.length;
 
       document.getElementById('vchTableBody').innerHTML = state.vouchers.map(v => `
-        <tr><td>${v.id}</td><td>${v.type}</td><td>${v.head}</td><td>${v.date}</td><td>${Number(v.amount).toLocaleString()}</td><td>${v.note}</td></tr>
+        <tr>
+          <td>${v.id}</td>
+          <td>${v.type}</td>
+          <td>${v.head}</td>
+          <td>${v.date}</td>
+          <td>${Number(v.amount).toLocaleString()}</td>
+          <td>${v.note}</td>
+          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/vouchers/${encodeURIComponent(v.id)}')">Delete</button></td>
+        </tr>
       `).join('');
 
       document.getElementById('tbTableBody').innerHTML = fin.trialBalance.length
@@ -638,7 +694,14 @@
         : `<tr><td colspan="4" class="muted">No ledger entries yet.</td></tr>`;
 
       document.getElementById('rndTableBody').innerHTML = state.rndItems.map(r => `
-        <tr><td>${r.id}</td><td>${r.topic}</td><td>${r.vertical}</td><td>${Number(r.expense).toLocaleString()}</td><td>${r.status}</td></tr>
+        <tr>
+          <td>${r.id}</td>
+          <td>${r.topic}</td>
+          <td>${r.vertical}</td>
+          <td>${Number(r.expense).toLocaleString()}</td>
+          <td>${r.status}</td>
+          <td class="no-print"><button class="btn danger" onclick="deleteItem('/api/rnd/${encodeURIComponent(r.id)}')">Delete</button></td>
+        </tr>
       `).join('');
     }
 
@@ -747,6 +810,20 @@
           deadline: document.getElementById('tskDeadline').value
         })
       });
+      await refreshState();
+    }
+
+    async function updateTaskStatus(id, status) {
+      await fetch(`/api/tasks/${encodeURIComponent(id)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      await refreshState();
+    }
+
+    async function deleteItem(url) {
+      await fetch(url, { method: 'DELETE' });
       await refreshState();
     }
 
