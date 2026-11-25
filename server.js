@@ -9,7 +9,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Initial Test Drive State (7 Core BMS Modules)
 const bmsState = {
   company: 'Nineteen Alpha',
   systemName: 'Business Management System (BMS)',
@@ -92,11 +91,19 @@ const bmsState = {
       condition: 'Good'
     }
   ],
+  chartOfAccounts: [
+    { code: '1000', name: 'Cash & Bank / Petty Cash', type: 'Asset' },
+    { code: '1100', name: 'Accounts Receivable & Inventory', type: 'Asset' },
+    { code: '2000', name: 'Accounts Payable & Accrued Dues', type: 'Liability' },
+    { code: '3000', name: 'Capital & Retained Earnings', type: 'Equity' },
+    { code: '4000', name: 'Project, Supply & Consultancy Revenue', type: 'Income' },
+    { code: '5000', name: 'Operating, Project & R&D Expense', type: 'Expense' }
+  ],
   vouchers: [
     {
       id: 'VCH-501',
       type: 'Debit Voucher',
-      head: 'Office & Software Ops',
+      head: 'Operating, Project & R&D Expense',
       amount: 12500,
       note: 'Test drive operational entry',
       date: new Date().toISOString().slice(0, 10)
@@ -113,6 +120,38 @@ const bmsState = {
   ]
 };
 
+function computeFinanceSummary() {
+  let totalDebit = 0;
+  let totalCredit = 0;
+  const headTotals = {};
+
+  for (const v of bmsState.vouchers) {
+    const amt = Number(v.amount) || 0;
+    if (v.type === 'Credit Voucher') {
+      totalCredit += amt;
+    } else {
+      totalDebit += amt;
+    }
+    const key = v.head || 'General Account';
+    if (!headTotals[key]) {
+      headTotals[key] = { head: key, debit: 0, credit: 0, net: 0 };
+    }
+    if (v.type === 'Credit Voucher') {
+      headTotals[key].credit += amt;
+    } else {
+      headTotals[key].debit += amt;
+    }
+    headTotals[key].net = headTotals[key].credit - headTotals[key].debit;
+  }
+
+  return {
+    totalDebit,
+    totalCredit,
+    netCashFlow: totalCredit - totalDebit,
+    trialBalance: Object.values(headTotals)
+  };
+}
+
 app.get('/api/health', (req, res) => {
   res.json({
     ok: true,
@@ -122,7 +161,28 @@ app.get('/api/health', (req, res) => {
 });
 
 app.get('/api/state', (req, res) => {
-  res.json(bmsState);
+  res.json({
+    ...bmsState,
+    financeSummary: computeFinanceSummary()
+  });
+});
+
+app.post('/api/employees', (req, res) => {
+  const emp = {
+    id: req.body.id || `EMP-${String(bmsState.employees.length + 1).padStart(3, '0')}`,
+    name: req.body.name || 'New Staff',
+    designation: req.body.designation || 'Staff',
+    department: req.body.department || 'Operations',
+    nid: req.body.nid || 'N/A',
+    phone: req.body.phone || '',
+    emergencyPhone: req.body.emergencyPhone || '',
+    presentAddress: req.body.presentAddress || '',
+    permanentAddress: req.body.permanentAddress || '',
+    bankAccount: req.body.bankAccount || 'N/A',
+    basicSalary: Number(req.body.basicSalary) || 15000
+  };
+  bmsState.employees.push(emp);
+  res.status(201).json(emp);
 });
 
 app.post('/api/attendance', (req, res) => {
@@ -174,16 +234,66 @@ app.post('/api/tasks', (req, res) => {
   res.status(201).json(item);
 });
 
+app.post('/api/crm', (req, res) => {
+  const item = {
+    id: `CRM-${Date.now().toString().slice(-4)}`,
+    clientName: req.body.clientName || 'New Client',
+    sector: req.body.sector || 'Defence Sector',
+    tenderRef: req.body.tenderRef || 'RFQ-NEW',
+    estimatedValue: Number(req.body.estimatedValue) || 0,
+    stage: req.body.stage || 'Lead / Inquiry'
+  };
+  bmsState.crmDeals.unshift(item);
+  res.status(201).json(item);
+});
+
+app.post('/api/inventory', (req, res) => {
+  const item = {
+    sku: req.body.sku || `INV-${Date.now().toString().slice(-4)}`,
+    name: req.body.name || 'Inventory Item',
+    category: req.body.category || 'General Supply',
+    location: req.body.location || 'Main Store',
+    stockQty: Number(req.body.stockQty) || 0,
+    reorderLevel: Number(req.body.reorderLevel) || 5
+  };
+  bmsState.inventoryItems.unshift(item);
+  res.status(201).json(item);
+});
+
+app.post('/api/assets', (req, res) => {
+  const item = {
+    assetId: req.body.assetId || `AST-${Date.now().toString().slice(-4)}`,
+    name: req.body.name || 'Fixed Asset',
+    serialNo: req.body.serialNo || 'N/A',
+    assignedTo: req.body.assignedTo || 'Unassigned',
+    condition: req.body.condition || 'Good'
+  };
+  bmsState.assets.unshift(item);
+  res.status(201).json(item);
+});
+
 app.post('/api/vouchers', (req, res) => {
   const item = {
     id: `VCH-${Date.now().toString().slice(-4)}`,
     type: req.body.type || 'Debit Voucher',
-    head: req.body.head || 'General Expense',
+    head: req.body.head || 'Operating, Project & R&D Expense',
     amount: Number(req.body.amount) || 0,
     note: req.body.note || '',
     date: new Date().toISOString().slice(0, 10)
   };
   bmsState.vouchers.unshift(item);
+  res.status(201).json(item);
+});
+
+app.post('/api/rnd', (req, res) => {
+  const item = {
+    id: `RND-${Date.now().toString().slice(-4)}`,
+    topic: req.body.topic || 'R&D Initiative',
+    vertical: req.body.vertical || 'R&D',
+    expense: Number(req.body.expense) || 0,
+    status: req.body.status || 'In Research'
+  };
+  bmsState.rndItems.unshift(item);
   res.status(201).json(item);
 });
 
