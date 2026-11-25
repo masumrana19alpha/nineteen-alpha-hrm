@@ -265,6 +265,12 @@ app.post('/api/projects', (req, res) => {
   res.status(201).json(item);
 });
 
+app.delete('/api/projects/:code', (req, res) => {
+  bmsState.projects = bmsState.projects.filter(p => p.code !== req.params.code);
+  saveState(bmsState);
+  res.json({ ok: true });
+});
+
 app.post('/api/tasks', (req, res) => {
   const item = {
     id: `TSK-${Date.now().toString().slice(-4)}`,
@@ -278,6 +284,21 @@ app.post('/api/tasks', (req, res) => {
   bmsState.tasks.unshift(item);
   saveState(bmsState);
   res.status(201).json(item);
+});
+
+app.patch('/api/tasks/:id', (req, res) => {
+  const task = bmsState.tasks.find(t => t.id === req.params.id);
+  if (!task) return res.status(404).json({ error: 'Task not found' });
+  if (req.body.status) task.status = req.body.status;
+  if (req.body.priority) task.priority = req.body.priority;
+  saveState(bmsState);
+  res.json(task);
+});
+
+app.delete('/api/tasks/:id', (req, res) => {
+  bmsState.tasks = bmsState.tasks.filter(t => t.id !== req.params.id);
+  saveState(bmsState);
+  res.json({ ok: true });
 });
 
 app.post('/api/crm', (req, res) => {
@@ -294,6 +315,12 @@ app.post('/api/crm', (req, res) => {
   res.status(201).json(item);
 });
 
+app.delete('/api/crm/:id', (req, res) => {
+  bmsState.crmDeals = bmsState.crmDeals.filter(c => c.id !== req.params.id);
+  saveState(bmsState);
+  res.json({ ok: true });
+});
+
 app.post('/api/inventory', (req, res) => {
   const item = {
     sku: req.body.sku || `INV-${Date.now().toString().slice(-4)}`,
@@ -308,6 +335,12 @@ app.post('/api/inventory', (req, res) => {
   res.status(201).json(item);
 });
 
+app.delete('/api/inventory/:sku', (req, res) => {
+  bmsState.inventoryItems = bmsState.inventoryItems.filter(i => i.sku !== req.params.sku);
+  saveState(bmsState);
+  res.json({ ok: true });
+});
+
 app.post('/api/assets', (req, res) => {
   const item = {
     assetId: req.body.assetId || `AST-${Date.now().toString().slice(-4)}`,
@@ -319,6 +352,12 @@ app.post('/api/assets', (req, res) => {
   bmsState.assets.unshift(item);
   saveState(bmsState);
   res.status(201).json(item);
+});
+
+app.delete('/api/assets/:assetId', (req, res) => {
+  bmsState.assets = bmsState.assets.filter(a => a.assetId !== req.params.assetId);
+  saveState(bmsState);
+  res.json({ ok: true });
 });
 
 app.post('/api/vouchers', (req, res) => {
@@ -335,6 +374,12 @@ app.post('/api/vouchers', (req, res) => {
   res.status(201).json(item);
 });
 
+app.delete('/api/vouchers/:id', (req, res) => {
+  bmsState.vouchers = bmsState.vouchers.filter(v => v.id !== req.params.id);
+  saveState(bmsState);
+  res.json({ ok: true });
+});
+
 app.post('/api/rnd', (req, res) => {
   const item = {
     id: `RND-${Date.now().toString().slice(-4)}`,
@@ -346,6 +391,12 @@ app.post('/api/rnd', (req, res) => {
   bmsState.rndItems.unshift(item);
   saveState(bmsState);
   res.status(201).json(item);
+});
+
+app.delete('/api/rnd/:id', (req, res) => {
+  bmsState.rndItems = bmsState.rndItems.filter(r => r.id !== req.params.id);
+  saveState(bmsState);
+  res.json({ ok: true });
 });
 
 app.get('*', (req, res) => {
