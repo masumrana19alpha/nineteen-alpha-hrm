@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>19 Alpha BMS — Business Management System</title>
+  <!-- Tailwind CSS CDN (এটি ছাড়া ডিজাইন লোড হবে না) -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen">
@@ -149,11 +150,11 @@
 
       if (res.status === 401) {
         logout();
-        throw new Error(json.message || 'Session expired. Please log in again.');
+        throw new Error(json.message || json.error?.message || 'Session expired. Please log in again.');
       }
 
       if (!res.ok || json.success === false) {
-        throw new Error(json.message || `Request failed (HTTP ${res.status})`);
+        throw new Error(json.message || json.error?.message || `Request failed (HTTP ${res.status})`);
       }
 
       return json.data ?? json;
@@ -289,7 +290,7 @@
           const rows = Array.isArray(list) ? list : list.employees || [];
           contentArea.innerHTML = renderTable(
             ['ID', 'Name', 'Department', 'Designation', 'Status', 'Base Salary'],
-            rows.map((e) => [e.id, e.full_name, e.department_name || e.department_id, e.designation, e.status, e.base_salary])
+            rows.map((e) => [e.id, e.full_name, e.department_name || e.department_id || e.department, e.designation, e.status, e.base_salary || e.basic_salary])
           );
         } else if (tab === 'projects') {
           pageTitle.textContent = 'Projects';
@@ -298,7 +299,7 @@
           const rows = Array.isArray(list) ? list : list.projects || [];
           contentArea.innerHTML = renderTable(
             ['ID', 'Code / Name', 'Defence', 'Status', 'Budget', 'Spent'],
-            rows.map((p) => [p.id, p.name || p.title, p.is_defence_project ? 'Yes' : 'No', p.status, p.budget_amount, p.spent_amount])
+            rows.map((p) => [p.id, p.name || p.title, p.is_defence_project || p.is_defence_classified ? 'Yes' : 'No', p.status, p.budget_amount || p.budget_limit, p.spent_amount])
           );
         } else if (tab === 'tasks') {
           pageTitle.textContent = 'Task Management';
@@ -325,7 +326,7 @@
           const rows = Array.isArray(list) ? list : list.items || [];
           contentArea.innerHTML = renderTable(
             ['SKU', 'Item Name', 'Current Stock', 'Reorder Level', 'Unit Cost'],
-            rows.map((i) => [i.sku, i.name, i.current_stock, i.reorder_level, i.unit_cost])
+            rows.map((i) => [i.sku, i.name, i.current_stock || i.stock_qty, i.reorder_level, i.unit_cost])
           );
         } else if (tab === 'finance') {
           pageTitle.textContent = 'Accounts & Finance';
@@ -334,7 +335,7 @@
           const rows = Array.isArray(list) ? list : list.vouchers || [];
           contentArea.innerHTML = renderTable(
             ['ID', 'Voucher No', 'Date', 'Status', 'Total Debit'],
-            rows.map((v) => [v.id, v.voucher_no || v.reference_no, v.voucher_date, v.status, v.total_debit])
+            rows.map((v) => [v.id, v.voucher_no || v.reference_no, v.voucher_date, v.status, v.total_debit || v.amount])
           );
         } else if (tab === 'rnd') {
           pageTitle.textContent = 'R&D Initiatives';
@@ -343,7 +344,7 @@
           const rows = Array.isArray(list) ? list : list.initiatives || [];
           contentArea.innerHTML = renderTable(
             ['ID', 'Title', 'Stage', 'Budget Allocated'],
-            rows.map((r) => [r.id, r.title || r.name, r.stage, r.budget_allocated])
+            rows.map((r) => [r.id, r.title || r.name, r.stage || r.status, r.budget_allocated])
           );
         }
       } catch (err) {
