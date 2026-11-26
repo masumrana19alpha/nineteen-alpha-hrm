@@ -15,7 +15,13 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-app.use(helmet({ crossOriginResourcePolicy: false }));
+// FIX: Helmet-এর ডিফল্ট Content Security Policy (CSP) Tailwind CDN এবং inline script ব্লক করে।
+// তাই contentSecurityPolicy: false করে দেওয়া হলো, যাতে ফ্রন্টএন্ডের ডিজাইন লোড হয়।
+app.use(helmet({ 
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: false 
+}));
+
 app.use(
   cors({
     origin: env.corsOrigin === '*' ? true : env.corsOrigin.split(',').map((s) => s.trim()),
@@ -31,11 +37,8 @@ app.use('/uploads', express.static(path.resolve(UPLOAD_ROOT)));
 // API রাউটস
 app.use('/api', apiRoutes);
 
-// ============================================================================
 // ফ্রন্টএন্ড (index.html) সার্ভ করার কোড
-// এটি public ফোল্ডার থেকে index.html খুঁজবে
-// ============================================================================
-const publicDir = path.resolve(__dirname, '..', 'public'); // src/app.js থেকে এক ধাপ উপরে গিয়ে public ফোল্ডার
+const publicDir = path.resolve(__dirname, '..', 'public');
 const publicIndexHtml = path.join(publicDir, 'index.html');
 const rootIndexHtml = path.resolve(__dirname, '..', 'index.html');
 
@@ -49,15 +52,18 @@ if (fs.existsSync(publicDir)) {
   app.use(express.static(publicDir));
 }
 
-// SPA Fallback: API ছাড়া অন্য যেকোনো লিংকে গেলে index.html দেখাবে
+// SPA Fallback
 if (indexHtmlPath) {
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) return next();
+    
+    // ব্রাউজার যাতে পুরানো index.html ক্যাশ না করে
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     return res.sendFile(indexHtmlPath);
   });
 }
 
-// 404 এবং Error Handler (সবশেষে থাকতে হবে)
+// 404 এবং Error Handler
 app.use(notFoundHandler);
 app.use(errorHandler);
 
