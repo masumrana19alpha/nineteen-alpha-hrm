@@ -15,26 +15,38 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// FIX: Helmet-এর ডিফল্ট Content Security Policy (CSP) Tailwind CDN এবং inline script ব্লক করে।
-// তাই contentSecurityPolicy: false করে দেওয়া হলো, যাতে ফ্রন্টএন্ডের ডিজাইন লোড হয়।
+// Helmet ফিক্স (Tailwind এবং API রেসপন্সের জন্য)
 app.use(helmet({ 
   contentSecurityPolicy: false,
   crossOriginResourcePolicy: false 
 }));
 
+// CORS ফিক্স (নিশ্চিত করা যে ফ্রন্টএন্ড থেকে রিকোয়েস্ট ব্লক না হয়)
 app.use(
   cors({
-    origin: env.corsOrigin === '*' ? true : env.corsOrigin.split(',').map((s) => s.trim()),
+    origin: true,
     credentials: true,
   })
 );
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // আপলোড ফোল্ডার সার্ভ করা
 app.use('/uploads', express.static(path.resolve(UPLOAD_ROOT)));
 
-// API রাউটস
+// ============================================================================
+// HEALTH CHECK ROUTE (সার্ভার ঠিক আছে কিনা চেক করার জন্য)
+// ============================================================================
+app.get('/api/health', (_req, res) => {
+  res.json({
+    success: true,
+    service: '19-alpha-bms-api',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// মূল API রাউটস
 app.use('/api', apiRoutes);
 
 // ফ্রন্টএন্ড (index.html) সার্ভ করার কোড
@@ -52,12 +64,10 @@ if (fs.existsSync(publicDir)) {
   app.use(express.static(publicDir));
 }
 
-// SPA Fallback
+// SPA Fallback (index.html সার্ভ করা)
 if (indexHtmlPath) {
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) return next();
-    
-    // ব্রাউজার যাতে পুরানো index.html ক্যাশ না করে
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     return res.sendFile(indexHtmlPath);
   });
