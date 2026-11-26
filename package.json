@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "Nineteen Alpha Integrated Business Management System (BMS) — Enterprise ERP Platform",
   "main": "server.js",
+  "type": "module",
   "engines": {
     "node": ">=22.0.0"
   },
   "scripts": {
     "start": "node server.js",
+    "start:prod": "npm run migrate && node server.js",
     "dev": "node --watch server.js",
     "migrate": "node scripts/migrate.js",
     "test": "node --test tests/integration.test.js"
@@ -37,4 +39,3 @@
   "author": "Nineteen Alpha, Dhaka-1216, Bangladesh",
   "license": "PROPRIETARY"
 }
-
